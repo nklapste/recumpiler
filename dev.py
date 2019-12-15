@@ -643,7 +643,6 @@ def fuck_token(token: str) -> str:
         ):
             for i in range(random.randint(1, 2)):
                 fucked_tokens.append(fuck_token("andioop"))
-                print("added andioop")
 
     return " ".join(fucked_tokens)
 
