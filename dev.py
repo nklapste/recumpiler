@@ -60,7 +60,7 @@ randomly_lemmatize_probability = 0.1
 
 randomly_overemphasis_punct = True
 randomly_overemphasis_punct_probability = 0.5
-randomly_overemphasis_punct_max_fuck = 10
+randomly_overemphasis_punct_max_fuck = 4
 
 randomly_capitalize_word = True
 randomly_capitalize_word_probability = 0.1
@@ -120,6 +120,9 @@ add_x3_if_token_has_rawr_probability = 0.2
 me_2_meh_swap_probability = 0.5
 me_2_meow_swap_probability = 0.5
 
+hard_uwu_replace_probability = 0.3
+sub_to_subby_swap_probability = 0.3
+
 
 def owoer(token: str) -> str:
     token = re.sub(
@@ -162,6 +165,16 @@ def owoer(token: str) -> str:
             token,
             flags=re.IGNORECASE,
         )
+
+    if (
+        "uwu" not in token.lower()
+        and decision(hard_uwu_replace_probability)
+    ):
+        uwu_str = "uwu"
+        token = re.sub(
+            r"u+", uwu_str, token, flags=re.IGNORECASE, count=random.choice(range(0, 2))
+        )
+
     return token
 
 
@@ -190,7 +203,7 @@ def garbage(token: str) -> str:
 
     # cute -> koot
     token = re.sub(
-        r"([Cc])ute",
+        r"([Cc])u+te",
         lambda match: f"{match.group(1)}oo{'o'*random.randint(0,5)}t",
         token,
     )
@@ -274,6 +287,14 @@ def garbage(token: str) -> str:
             token,
             flags=re.IGNORECASE,
         )
+
+    if decision(sub_to_subby_swap_probability):
+        token = re.sub(
+            r"s(u+)b",
+            lambda match: f"s{match.group(1)}bb{('y' if decision(0.5) else 'i')*random.randint(1,2)}",
+            token,
+            flags=re.IGNORECASE,
+        )
     return token
 
 
@@ -304,6 +325,7 @@ def jizzer(token: str) -> str:
     return token
 
 
+# TODO: reval this some of it is ineffective i think
 def cummer(token: str) -> str:
     token = re.sub(r"(.ome|co+m|co+n{1,3})", "cum", token)
     token = re.sub(r"(c.{0,2}u+m)", "cum", token)
@@ -312,11 +334,11 @@ def cummer(token: str) -> str:
     token = re.sub(r"(son|sun$)", "cum", token)
 
     token = re.sub(
-        r"(.)([a-bd-zA-BD-Z]um)", lambda match: f"{match.group(1)}cum", token
+        r"([a-bd-zA-BD-Z])um", lambda match: f"{match.group(1)}cum", token
     )
 
     token = re.sub(
-        r"([a-bd-zA-BD-Z]u(nn|mm)([yi]))", lambda match: f"cumm{match.group(3)}", token
+        r"([a-bd-zA-BD-Z])u(nn|mm)([yi])", lambda match: f"{match.group(1)}cumm{match.group(3)}", token
     )
     token = re.sub(r"(cally)", "cummy", token)
 
@@ -415,24 +437,42 @@ def shuffle_str(token: str) -> str:
     return "".join(token_str_list)
 
 
-def over_emphasise_punctuation(token: str, max_fuck: int = 10) -> str:
+def over_emphasise_punctuation(token: str, max_fuck: int = 4) -> str:
     if token == "?":
-        token = token + "".join(
+        token += "".join(
             random.choices(
-                ["1", "i", "!", "?", "I", "/", ".", "\\"],
+                [
+                    "1",
+                    # "i",
+                    "!",
+                    "?",
+                    # "I",
+                    # "/",
+                    # ".",
+                    # "\\"
+                ],
                 k=random.choice(range(0, max_fuck)),
             )
         )
         token = shuffle_str(token)
     if token == "!":
-        token = token + "".join(
+        token += "".join(
             random.choices(
-                ["1", "i", "!", "?", "I", "/", "|"], k=random.choice(range(0, max_fuck))
+                [
+                    "1",
+                    # "i",
+                    "!",
+                    "?",
+                    # "I",
+                    # "/",
+                    "|",
+                ],
+                k=random.choice(range(0, max_fuck)),
             )
         )
         token = shuffle_str(token)
     if token == ".":
-        token = token + "".join(
+        token += "".join(
             random.choices([",", "."], k=random.choice(range(0, max_fuck)))
         )
         token = shuffle_str(token)
