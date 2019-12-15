@@ -26,8 +26,14 @@ import splitter
 
 
 def knotter(token: str) -> str:
-    token = re.sub(r"no+t", lambda match: f"kn{'o' * random.choice(range(1, 3))}t", token, flags=re.IGNORECASE)
+    token = re.sub(
+        r"no+t",
+        lambda match: f"kn{'o' * random.choice(range(1, 3))}t",
+        token,
+        flags=re.IGNORECASE,
+    )
     return token
+
 
 # TODO: refactor this global garbage
 
@@ -480,7 +486,6 @@ def utf_8_char_swaps(token: str) -> str:
     return token
 
 
-
 def get_token_random_definition(token: str) -> Optional[str]:
     synsets = wn.synsets(token)
     if synsets:
@@ -551,8 +556,6 @@ def fuck_sentence(sentance: Sentence) -> List[str]:
 
 def add_ending_y(token: str) -> str:
     return re.sub(r"([a-zA-Z]{4,}[^sy])", lambda match: f"{match.group(1)}y", token)
-
-
 
 
 def get_random_lorem_ipsum() -> str:
@@ -632,7 +635,9 @@ def fuck_token(token: str) -> str:
 
         fucked_tokens.append(fucked_token)
 
-        if decision(add_x3_if_token_has_rawr_probability) and ('rawr' in fucked_token.lower()):
+        if decision(add_x3_if_token_has_rawr_probability) and (
+            "rawr" in fucked_token.lower()
+        ):
             fucked_tokens.append("X3" if decision(0.5) else "x3")
 
         if decision(adding_ending_ksksk_andioop_probability) and (
@@ -654,7 +659,9 @@ def bold_text(token: str) -> str:
         return token
     return f"**{token.strip('*')}**"
 
+
 more_verbs_probability_decay = 0.3
+
 
 def get_random_rp_action_sentence() -> str:
     more_verbs = []
@@ -679,8 +686,6 @@ def get_random_rp_action_sentence() -> str:
     noun = fuck_token(noun)
     noun = Word(noun).pluralize()
     return to_rp_text(f"{' and '.join(more_verbs)}{' ' if more_verbs else ''}{noun}")
-
-
 
 
 def lazy_char_subbing(token: str) -> str:
@@ -737,12 +742,7 @@ def lazy_char_subbing(token: str) -> str:
     )
 
     # to,too, -> 2
-    token = re.sub(
-        "to+$",
-        lambda match: f"2",
-        token,
-        flags=re.IGNORECASE,
-    )
+    token = re.sub("to+$", lambda match: f"2", token, flags=re.IGNORECASE,)
     return token
 
 
@@ -789,7 +789,6 @@ def back_tick_text(token: str) -> str:
     ):  # don't back_tick tokens of all punctuation as it bugs up rejoining punctuation later *todo: maybe alternate fix?
         return token
     return f"`{token.strip('`')}`"
-
 
 
 def split_compound_word(token: str) -> List[str]:
