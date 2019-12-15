@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""""""
+"""garbage code to make garbage text"""
 
 # import nltk
 # nltk.download('wordnet')
