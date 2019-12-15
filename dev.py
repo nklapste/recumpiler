@@ -626,10 +626,10 @@ def fuck_token(token: str) -> str:
         fucked_tokens.append(fucked_token)
 
         if decision(adding_ending_ksksk_andioop_probability) and (
-            token.lower().endswith("ksk")
-            or token.lower().endswith("sks")
-            or "ksksk" in token.lower()
-            or "sksks" in token.lower()
+            fucked_token.lower().endswith("ksk")
+            or fucked_token.lower().endswith("sks")
+            or "ksksk" in fucked_token.lower()
+            or "sksks" in fucked_token.lower()
         ):
             for i in range(random.randint(1, 2)):
                 fucked_tokens.append(fuck_token("andioop"))
