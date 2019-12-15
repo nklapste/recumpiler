@@ -110,6 +110,8 @@ uck_to_ucc_swap_probability = 0.4
 
 juwuice_swap_probability = 0.5
 
+add_x3_if_token_has_rawr_probability = 0.2
+
 
 def owoer(token: str) -> str:
     token = re.sub(
@@ -624,6 +626,9 @@ def fuck_token(token: str) -> str:
             fucked_token = back_tick_text(fucked_token)
 
         fucked_tokens.append(fucked_token)
+
+        if decision(add_x3_if_token_has_rawr_probability) and ('rawr' in fucked_token.lower()):
+            fucked_tokens.append("X3" if decision(0.5) else "x3")
 
         if decision(adding_ending_ksksk_andioop_probability) and (
             fucked_token.lower().endswith("ksk")
