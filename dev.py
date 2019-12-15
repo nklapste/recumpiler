@@ -117,6 +117,8 @@ uck_to_ucc_swap_probability = 0.4
 juwuice_swap_probability = 0.5
 
 add_x3_if_token_has_rawr_probability = 0.2
+me_2_meh_swap_probability = 0.5
+me_2_meow_swap_probability = 0.5
 
 
 def owoer(token: str) -> str:
@@ -199,6 +201,25 @@ def garbage(token: str) -> str:
             r"([aA])([sS])($|[^s])",
             lambda match: f"{match.group(1)}{match.group(2)*random.randint(2,3)}t",
             token,
+        )
+
+    # TODO: refactor (me -> meh|me -> meow) together?
+    # me -> meow
+    if decision(me_2_meow_swap_probability):
+        token = re.sub(
+            r"^me+$",
+            lambda match: f"m{'e'*random.randint(1,3)}{'o'*random.randint(1,3)}w",
+            token,
+            flags=re.IGNORECASE,
+        )
+
+    # me -> meh
+    if decision(me_2_meh_swap_probability):
+        token = re.sub(
+            r"^me+$",
+            lambda match: f"m{'e' * random.randint(1, 3)}h",
+            token,
+            flags=re.IGNORECASE,
         )
 
     # my -> mah, myah
