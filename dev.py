@@ -5,9 +5,10 @@
 
 # import nltk
 # nltk.download('wordnet')
+# nltk.download('cmudict')
 # TODO: another download was needed for nltk for this dunno what thou
 import sqlite3
-from typing import List, Optional
+from typing import List, Optional, Set
 import re
 
 import csv
@@ -16,7 +17,9 @@ import random
 import string
 from math import ceil
 
+import nltk
 import pandas
+import pronouncing
 from textblob import TextBlob, Word, Sentence
 
 
@@ -393,14 +396,14 @@ with open("emoji.csv", newline="\n", encoding="utf-8") as csvfile:
         [item for sublist in csv.reader(csvfile) for item in sublist]
     )
 
-con = sqlite3.connect(':memory:')
+con = sqlite3.connect(":memory:")
 with open(
     "emoji-sentiment-data\\Emoji_Sentiment_Data_v1.0.csv",
     newline="\n",
     encoding="utf-8",
 ) as csvfile:
     df = pandas.read_csv(csvfile)
-    df.to_sql("Emoji_Sentiment_Data", con, if_exists='append', index=False)
+    df.to_sql("Emoji_Sentiment_Data", con, if_exists="append", index=False)
 
 
 with open("simple_text_emoji.csv", newline="\n", encoding="utf-8") as csvfile:
@@ -444,6 +447,72 @@ def shuffle_str(token: str) -> str:
     token_str_list = list(token)
     random.shuffle(token_str_list)
     return "".join(token_str_list)
+
+
+def get_runon_of_rhymes(
+    token: str, min_runon: int = 1, max_runon: int = 3, max_rhyme_dups: int = 0, allow_token_dupe: bool = False
+) -> Set[str]:
+    selected_rhymes = set()
+    tried_nltk = False
+    tried_pronouncing = False
+    while True:
+        if decision(0.5):
+            tried_pronouncing = True
+            rhymes = get_pronouncing_rhyme(token)
+            if not allow_token_dupe:
+                try:
+                    rhymes.remove(token)
+                except ValueError:
+                    pass
+            if rhymes:
+                selected_rhymes.add(random.choice(rhymes))
+        else:
+            tried_nltk = True
+            level = 4
+            while True:
+                rhymes = get_nltk_rymes(token, level)
+                if not allow_token_dupe:
+                    try:
+                        rhymes.remove(token)
+                    except ValueError:
+                        pass
+                if rhymes:
+                    selected_rhymes.add(random.choice(rhymes))
+                    break
+                if level == 0:
+                    break
+                level -= 1
+
+        if (decision(0.5) and len(selected_rhymes) == min_runon) or \
+                len(selected_rhymes) == max_runon:
+            break
+
+        if not selected_rhymes and tried_pronouncing and tried_nltk:
+            break
+    return selected_rhymes
+
+
+def get_pronouncing_rhyme(token: str) -> List[str]:
+    return pronouncing.rhymes(token)
+
+
+def get_nltk_rymes(token: str, level) -> List[str]:
+    # TODO: stub
+    def rhyme(inp, level):
+        """
+        1 bad rhymes
+        2
+        4 good rhymes
+        """
+        entries = nltk.corpus.cmudict.entries()
+        syllables = [(word, syl) for word, syl in entries if word == inp]
+        rhymes = []
+        for (word, syllable) in syllables:
+            rhymes += [
+                word for word, pron in entries if pron[-level:] == syllable[-level:]
+            ]
+        return set(rhymes)
+    return list(rhyme(token, level))
 
 
 def over_emphasise_punctuation(token: str, max_fuck: int = 4) -> str:
