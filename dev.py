@@ -167,10 +167,7 @@ def owoer(token: str) -> str:
             flags=re.IGNORECASE,
         )
 
-    if (
-        "uwu" not in token.lower()
-        and decision(hard_uwu_replace_probability)
-    ):
+    if "uwu" not in token.lower() and decision(hard_uwu_replace_probability):
         uwu_str = "uwu"
         token = re.sub(
             r"u+", uwu_str, token, flags=re.IGNORECASE, count=random.choice(range(0, 2))
@@ -334,12 +331,12 @@ def cummer(token: str) -> str:
     token = re.sub(r"(cow)", "cum", token)
     token = re.sub(r"(son|sun$)", "cum", token)
 
-    token = re.sub(
-        r"([a-bd-zA-BD-Z])um", lambda match: f"{match.group(1)}cum", token
-    )
+    token = re.sub(r"([a-bd-zA-BD-Z])um", lambda match: f"{match.group(1)}cum", token)
 
     token = re.sub(
-        r"([a-bd-zA-BD-Z])u(nn|mm)([yi])", lambda match: f"{match.group(1)}cumm{match.group(3)}", token
+        r"([a-bd-zA-BD-Z])u(nn|mm)([yi])",
+        lambda match: f"{match.group(1)}cumm{match.group(3)}",
+        token,
     )
     token = re.sub(r"(cally)", "cummy", token)
 
@@ -557,6 +554,7 @@ def get_token_random_definition(token: str) -> Optional[str]:
 def fuck_sentence(sentance: Sentence) -> List[str]:
     new_tokens = []
     # TODO: determine mood classifier for sentence and add respective emoji
+
     for token in sentance.tokens:
         original_token = token
 
@@ -711,10 +709,10 @@ def fuck_token(token: str) -> str:
             for i in range(random.randint(1, 2)):
                 fucked_tokens.append(fuck_token("andioop"))
         if decision(adding_ending_ksksk_save_the_turtles_probability) and (
-                fucked_token.lower().endswith("ksk")
-                or fucked_token.lower().endswith("sks")
-                or "ksksk" in fucked_token.lower()
-                or "sksks" in fucked_token.lower()
+            fucked_token.lower().endswith("ksk")
+            or fucked_token.lower().endswith("sks")
+            or "ksksk" in fucked_token.lower()
+            or "sksks" in fucked_token.lower()
         ):
             fucked_tokens.append(fuck_text_blob("save the turtles!"))
 
