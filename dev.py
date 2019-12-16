@@ -453,8 +453,13 @@ get_rhymes_probability = 0.01
 max_runon_rhymes = 3
 min_runon_rhymes = 1
 
+
 def get_runon_of_rhymes(
-    token: str, min_runon: int = 1, max_runon: int = 3, max_rhyme_dups: int = 0, allow_token_dupe: bool = False
+    token: str,
+    min_runon: int = 1,
+    max_runon: int = 3,
+    max_rhyme_dups: int = 0,
+    allow_token_dupe: bool = False,
 ) -> Set[str]:
     selected_rhymes = set()
     tried_nltk = False
@@ -487,8 +492,9 @@ def get_runon_of_rhymes(
                     break
                 level -= 1
 
-        if (decision(0.5) and len(selected_rhymes) == min_runon) or \
-                len(selected_rhymes) == max_runon:
+        if (decision(0.5) and len(selected_rhymes) == min_runon) or len(
+            selected_rhymes
+        ) == max_runon:
             break
 
         if not selected_rhymes and tried_pronouncing and tried_nltk:
@@ -516,6 +522,7 @@ def get_nltk_rymes(token: str, level) -> List[str]:
                 word for word, pron in entries if pron[-level:] == syllable[-level:]
             ]
         return set(rhymes)
+
     return list(rhyme(token, level))
 
 
@@ -801,9 +808,11 @@ def fuck_token(token: str) -> str:
             fucked_tokens.append(fuck_text_blob("save the turtles!"))
 
         if decision(get_rhymes_probability):
-            for rhyme in get_runon_of_rhymes(token, max_runon=max_runon_rhymes, min_runon=min_runon_rhymes):
+            for rhyme in get_runon_of_rhymes(
+                token, max_runon=max_runon_rhymes, min_runon=min_runon_rhymes
+            ):
                 fucked_rhyme = fuck_token(rhyme)
-                print(f'adding rhyme {token} {rhyme} {fucked_rhyme}')
+                print(f"adding rhyme {token} {rhyme} {fucked_rhyme}")
                 fucked_tokens.append(fucked_rhyme)
 
     return " ".join(fucked_tokens)
