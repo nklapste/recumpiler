@@ -392,6 +392,20 @@ with open("emoji.csv", newline="\n", encoding="utf-8") as csvfile:
     )
 
 
+with open(
+    "emoji-sentiment-data\\Emoji_Sentiment_Data_v1.0.csv",
+    newline="\n",
+    encoding="utf-8",
+) as csvfile:
+    csv_list = [[val.strip() for val in r.split(",")] for r in csvfile.readlines()]
+
+    (_, *header), *data = csv_list
+    emoji_sentiment_data = {}
+    for row in data:
+        key, *values = row
+        emoji_sentiment_data[key] = {key: value for key, value in zip(header, values)}
+
+
 with open("simple_text_emoji.csv", newline="\n", encoding="utf-8") as csvfile:
     simple_text_emojis = list(
         [item for sublist in csv.reader(csvfile) for item in sublist]
