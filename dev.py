@@ -53,6 +53,7 @@ REEE_allcaps_probability = 0.3
 add_random_rp_action = True
 add_random_rp_mid_sentance_action_probability = 0.04
 add_random_rp_end_sentance_action_probability = 0.08
+more_verbs_probability_decay = 0.4
 
 add_random_garbage = True
 add_random_garbage_probability = 0.01
@@ -824,9 +825,6 @@ def bold_text(token: str) -> str:
     ):  # don't bold tokens of all punctuation as it bugs up rejoining punctuation later *todo: maybe alternate fix?
         return token
     return f"**{token.strip('*')}**"
-
-
-more_verbs_probability_decay = 0.3
 
 
 def get_random_rp_action_sentence() -> str:
