@@ -100,6 +100,7 @@ leet_min_token_lenght = 5
 
 add_definition_in_parenthesis_probability = 0.005
 adding_ending_ksksk_andioop_probability = 0.8
+adding_ending_ksksk_save_the_turtles_probability = 0.3
 
 ksks_enlargement_probability = 0.7
 
@@ -709,8 +710,7 @@ def fuck_token(token: str) -> str:
         ):
             for i in range(random.randint(1, 2)):
                 fucked_tokens.append(fuck_token("andioop"))
-
-        if decision(adding_ending_ksksk_andioop_probability) and (
+        if decision(adding_ending_ksksk_save_the_turtles_probability) and (
                 fucked_token.lower().endswith("ksk")
                 or fucked_token.lower().endswith("sks")
                 or "ksksk" in fucked_token.lower()
