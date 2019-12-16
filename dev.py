@@ -6,6 +6,7 @@
 # import nltk
 # nltk.download('wordnet')
 # TODO: another download was needed for nltk for this dunno what thou
+import sqlite3
 from typing import List, Optional
 import re
 
@@ -15,6 +16,7 @@ import random
 import string
 from math import ceil
 
+import pandas
 from textblob import TextBlob, Word, Sentence
 
 
@@ -391,19 +393,14 @@ with open("emoji.csv", newline="\n", encoding="utf-8") as csvfile:
         [item for sublist in csv.reader(csvfile) for item in sublist]
     )
 
-
+con = sqlite3.connect(':memory:')
 with open(
     "emoji-sentiment-data\\Emoji_Sentiment_Data_v1.0.csv",
     newline="\n",
     encoding="utf-8",
 ) as csvfile:
-    csv_list = [[val.strip() for val in r.split(",")] for r in csvfile.readlines()]
-
-    (_, *header), *data = csv_list
-    emoji_sentiment_data = {}
-    for row in data:
-        key, *values = row
-        emoji_sentiment_data[key] = {key: value for key, value in zip(header, values)}
+    df = pandas.read_csv(csvfile)
+    df.to_sql("Emoji_Sentiment_Data", con, if_exists='append', index=False)
 
 
 with open("simple_text_emoji.csv", newline="\n", encoding="utf-8") as csvfile:
