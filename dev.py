@@ -710,6 +710,14 @@ def fuck_token(token: str) -> str:
             for i in range(random.randint(1, 2)):
                 fucked_tokens.append(fuck_token("andioop"))
 
+        if decision(adding_ending_ksksk_andioop_probability) and (
+                fucked_token.lower().endswith("ksk")
+                or fucked_token.lower().endswith("sks")
+                or "ksksk" in fucked_token.lower()
+                or "sksks" in fucked_token.lower()
+        ):
+            fucked_tokens.append(fuck_text_blob("save the turtles!"))
+
     return " ".join(fucked_tokens)
 
 
