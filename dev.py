@@ -449,6 +449,10 @@ def shuffle_str(token: str) -> str:
     return "".join(token_str_list)
 
 
+get_rhymes_probability = 0.01
+max_runon_rhymes = 3
+min_runon_rhymes = 1
+
 def get_runon_of_rhymes(
     token: str, min_runon: int = 1, max_runon: int = 3, max_rhyme_dups: int = 0, allow_token_dupe: bool = False
 ) -> Set[str]:
@@ -795,6 +799,12 @@ def fuck_token(token: str) -> str:
             or "sksks" in fucked_token.lower()
         ):
             fucked_tokens.append(fuck_text_blob("save the turtles!"))
+
+        if decision(get_rhymes_probability):
+            for rhyme in get_runon_of_rhymes(token, max_runon=max_runon_rhymes, min_runon=min_runon_rhymes):
+                fucked_rhyme = fuck_token(rhyme)
+                print(f'adding rhyme {token} {rhyme} {fucked_rhyme}')
+                fucked_tokens.append(fucked_rhyme)
 
     return " ".join(fucked_tokens)
 
