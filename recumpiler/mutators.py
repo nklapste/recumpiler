@@ -43,7 +43,7 @@ def knotter(token: str) -> str:
 
 # TODO: refactor this global garbage
 
-common_mispellings_probability = 0.2
+common_misspellings_probability = 0.2
 hard_owo_replace_probability = 0.2
 
 bold_text_probability = 0.04
@@ -52,8 +52,8 @@ REEE_probability = 0.06
 REEE_allcaps_probability = 0.3
 
 add_random_rp_action = True
-add_random_rp_mid_sentance_action_probability = 0.005
-add_random_rp_end_sentance_action_probability = 0.02
+add_random_rp_mid_sentence_action_probability = 0.005
+add_random_rp_end_sentence_action_probability = 0.02
 more_verbs_probability_decay = 0.4
 
 add_random_garbage = True
@@ -65,9 +65,9 @@ add_random_plurals_probability = 0.1
 randomly_lemmatize = True
 randomly_lemmatize_probability = 0.1
 
-randomly_overemphasis_punct = True
-randomly_overemphasis_punct_probability = 0.5
-randomly_overemphasis_punct_max_fuck = 4
+randomly_overemphasis_punctuation = True
+randomly_overemphasis_punctuation_probability = 0.5
+randomly_overemphasis_punctuation_max_fuck = 4
 
 randomly_capitalize_word = True
 randomly_capitalize_word_probability = 0.1
@@ -76,7 +76,7 @@ randomly_spongebob_word = True
 randomly_spongebob_word_probability = 0.1
 
 add_randomly_text_face_emoji = True
-add_randomly_text_face_emojis_probability = 0.05
+add_randomly_text_face_emoji_probability = 0.05
 
 add_random_simple_text_emoji = True
 add_random_simple_text_emoji_probability = 0.07
@@ -89,8 +89,8 @@ randomly_insert_char = True
 randomly_insert_char_probability = 0.04
 randomly_insert_char_insert_percent = 0.1
 
-random_leet_speek = True
-random_leet_speek_probability = 0.1
+random_leet_speak = True
+random_leet_speak_probability = 0.1
 
 utf_8_char_swaps_probability = 0.1
 
@@ -102,19 +102,19 @@ censor_profanity_percent = 0.25
 
 random_synonym_probability = 0.5
 
-random_ending_y_probabilty = 0.05
-leet_min_token_lenght = 5
+random_ending_y_probability = 0.05
+leet_speak_min_token_length = 5
 
 add_definition_in_parenthesis_probability = 0.005
 adding_ending_ksksk_andioop_probability = 0.8
 adding_ending_ksksk_save_the_turtles_probability = 0.3
 
-ksks_enlargement_probability = 0.7
+ksksk_enlargement_probability = 0.7
 
-owo_vs_ouo_bais = 0.5
+owo_vs_ouo_bias = 0.5
 
-random_lorem_ipsum_probabilty = 0.015
-lorem_ipsum_fuck_probabilty = 0.3
+random_lorem_ipsum_probability = 0.015
+lorem_ipsum_fuck_probability = 0.3
 
 add_extra_ed_probability = 0.05
 split_compound_word_probability = 0.03
@@ -159,7 +159,7 @@ def owoer(token: str) -> str:
         and "ouo" not in token.lower()
         and decision(hard_owo_replace_probability)
     ):
-        owo_str = "owo" if decision(owo_vs_ouo_bais) else "ouo"
+        owo_str = "owo" if decision(owo_vs_ouo_bias) else "ouo"
         token = re.sub(
             r"(o+)", lambda match: (owo_str * len(match.group(1))).replace("oo", "o"), token, flags=re.IGNORECASE, count=random.choice(range(0, 2))
         )
@@ -276,7 +276,7 @@ def garbage(token: str) -> str:
         )
 
     # ks -> ksksksk
-    if decision(ksks_enlargement_probability):
+    if decision(ksksk_enlargement_probability):
         token = re.sub(
             r"[kK][sS]|[sS][kK]",
             lambda match: f"{match.group(0)*random.randint(2,6)}",
@@ -689,7 +689,7 @@ def fuck_sentence(sentance: Sentence) -> List[str]:
         if add_random_garbage and decision(add_random_garbage_probability):
             new_tokens.append(fuck_token(add_random_garbage_token()))
         if add_randomly_text_face_emoji and decision(
-            add_randomly_text_face_emojis_probability
+            add_randomly_text_face_emoji_probability
         ):
             new_tokens.append(get_random_text_face_emojis())
         if add_random_simple_text_emoji and decision(
@@ -700,13 +700,13 @@ def fuck_sentence(sentance: Sentence) -> List[str]:
         ):
             new_tokens.append(get_random_simple_text_emojis())
         if add_random_rp_action and decision(
-            add_random_rp_mid_sentance_action_probability
+            add_random_rp_mid_sentence_action_probability
         ):
             new_tokens.append(get_random_rp_action_sentence())
-    if add_random_rp_action and decision(add_random_rp_end_sentance_action_probability):
+    if add_random_rp_action and decision(add_random_rp_end_sentence_action_probability):
         new_tokens.append(get_random_rp_action_sentence())
 
-    if decision(random_lorem_ipsum_probabilty):
+    if decision(random_lorem_ipsum_probability):
         new_tokens.append(get_random_lorem_ipsum())
     return new_tokens
 
@@ -717,7 +717,7 @@ def add_ending_y(token: str) -> str:
 
 def get_random_lorem_ipsum() -> str:
     """get lorem ipsum sentence"""
-    if decision(lorem_ipsum_fuck_probabilty):
+    if decision(lorem_ipsum_fuck_probability):
         fuck_sentence(Sentence(lorem.sentence()))
     return lorem.sentence()
 
@@ -739,7 +739,7 @@ def fuck_token(token: str) -> str:
         if decision(add_extra_ed_probability):
             fucked_token = add_extra_ed(fucked_token)
 
-        if decision(random_ending_y_probabilty):
+        if decision(random_ending_y_probability):
             fucked_token = add_ending_y(fucked_token)
 
         if add_random_plurals and decision(add_random_plurals_probability):
@@ -756,14 +756,14 @@ def fuck_token(token: str) -> str:
         if randomly_spongebob_word and decision(randomly_spongebob_word_probability):
             fucked_token = generate_spongebob_text(fucked_token)
 
-        if randomly_overemphasis_punct and decision(
-            randomly_overemphasis_punct_probability
+        if randomly_overemphasis_punctuation and decision(
+            randomly_overemphasis_punctuation_probability
         ):
             fucked_token = over_emphasise_punctuation(
-                fucked_token, randomly_overemphasis_punct_max_fuck
+                fucked_token, randomly_overemphasis_punctuation_max_fuck
             )
 
-        if decision(common_mispellings_probability):
+        if decision(common_misspellings_probability):
             fucked_token = common_mispellings(fucked_token)
 
         if randomly_swap_char and decision(randomly_swap_char_probability):
@@ -778,10 +778,10 @@ def fuck_token(token: str) -> str:
         if decision(utf_8_char_swaps_probability):
             fucked_token = utf_8_char_swaps(fucked_token)
 
-        if random_leet_speek and decision(random_leet_speek_probability):
+        if random_leet_speak and decision(random_leet_speak_probability):
             fucked_token = token_to_leet(fucked_token)
 
-        if decision(common_mispellings_probability):
+        if decision(common_misspellings_probability):
             fucked_token = common_mispellings(fucked_token)
 
         # TODO: discord format options
