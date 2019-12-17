@@ -402,7 +402,6 @@ def add_random_garbage_token():
     return random.choice(garbage_tokens)
 
 
-
 dir_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(dir_path, "data")
 
@@ -411,14 +410,26 @@ with open(os.path.join(data_path, "emoji.csv"), newline="\n", encoding="utf-8") 
         [item for sublist in csv.reader(csvfile) for item in sublist]
     )
 
-con = sqlite3.connect(":memory:")
+emoji_database = sqlite3.connect(":memory:")
 with open(
     os.path.join(data_path, "emoji-sentiment-data", "Emoji_Sentiment_Data_v1.0.csv"),
     newline="\n",
     encoding="utf-8",
 ) as csvfile:
     df = pandas.read_csv(csvfile)
-    df.to_sql("Emoji_Sentiment_Data", con, if_exists="append", index=False)
+    df.to_sql("Emoji_Sentiment_Data", emoji_database, if_exists="append", index=False)
+
+
+add_text_relevant_emoji_probability = 0.1
+wrap_text_relevant_emoji_probability = 0.02
+
+
+def find_text_relevant_emoji(token: str) -> str:
+    if len(token) < 4:  # TODO: find better logic to avoid getting garbage or complete unrelated emojis
+        return token
+    results = emoji_database.execute("""select Emoji from Emoji_Sentiment_Data where "Unicode name" LIKE ?""", ("%"+token.upper()+"%",)).fetchall()
+    if results:
+        return random.choice(results)[0]
 
 
 with open(os.path.join(data_path, "simple_text_emoji.csv"), newline="\n", encoding="utf-8") as csvfile:
@@ -740,6 +751,12 @@ def fuck_token(token: str) -> str:
     # TODO: migrate fuck_token to maybe a generator?
     fucked_tokens = []
     for token in tokens:
+        relevant_emoji = None
+        if decision(add_text_relevant_emoji_probability):
+            relevant_emoji = find_text_relevant_emoji(token)  # TODO: add ability to get multiple?
+            if relevant_emoji and decision(wrap_text_relevant_emoji_probability):
+                fucked_tokens.append(relevant_emoji)
+
         if decision(lazy_char_subbing_probability):
             token = lazy_char_subbing(token)
         fucked_token = knotter(fuckyer(reeeer(rawrer(garbage(owoer(cummer(token)))))))
@@ -828,6 +845,9 @@ def fuck_token(token: str) -> str:
                 fucked_rhyme = fuck_token(rhyme)
                 print(f"adding rhyme {token} {rhyme} {fucked_rhyme}")
                 fucked_tokens.append(fucked_rhyme)
+
+        if relevant_emoji:
+            fucked_tokens.append(relevant_emoji)
 
     return " ".join(fucked_tokens)
 
