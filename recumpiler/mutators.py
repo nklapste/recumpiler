@@ -300,6 +300,15 @@ def garbage(token: str) -> str:
             token,
             flags=re.IGNORECASE,
         )
+
+    # no -> nu+ nyu+
+    if decision(0.5):
+        token = re.sub(
+            "([nN])(o+)",
+            lambda match: f"{match.group(1)}{'y' if decision(0.5) else ''}{'u'*(len(match.group(2))*random.randint(1,6))}",
+            token,
+            flags=re.IGNORECASE
+        )
     return token
 
 
