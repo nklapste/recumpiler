@@ -7,6 +7,7 @@
 # nltk.download('wordnet')
 # nltk.download('cmudict')
 # TODO: another download was needed for nltk for this dunno what thou
+import os
 import sqlite3
 from typing import List, Optional, Set
 import re
@@ -392,14 +393,18 @@ def add_random_garbage_token():
     return random.choice(garbage_tokens)
 
 
-with open("emoji.csv", newline="\n", encoding="utf-8") as csvfile:
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+data_path = os.path.join(dir_path, "data")
+
+with open(os.path.join(data_path, "emoji.csv"), newline="\n", encoding="utf-8") as csvfile:
     text_face_emojis = list(
         [item for sublist in csv.reader(csvfile) for item in sublist]
     )
 
 con = sqlite3.connect(":memory:")
 with open(
-    "emoji-sentiment-data\\Emoji_Sentiment_Data_v1.0.csv",
+    os.path.join(data_path, "emoji-sentiment-data", "Emoji_Sentiment_Data_v1.0.csv"),
     newline="\n",
     encoding="utf-8",
 ) as csvfile:
@@ -407,17 +412,17 @@ with open(
     df.to_sql("Emoji_Sentiment_Data", con, if_exists="append", index=False)
 
 
-with open("simple_text_emoji.csv", newline="\n", encoding="utf-8") as csvfile:
+with open(os.path.join(data_path, "simple_text_emoji.csv"), newline="\n", encoding="utf-8") as csvfile:
     simple_text_emojis = list(
         [item for sublist in csv.reader(csvfile) for item in sublist]
     )
 
 
-with open("action_verbs.csv", newline="\n", encoding="utf-8") as csvfile:
+with open(os.path.join(data_path, "action_verbs.csv"), newline="\n", encoding="utf-8") as csvfile:
     action_verbs = list([item for sublist in csv.reader(csvfile) for item in sublist])
 
 
-with open("rp_pronouns.csv", newline="\n", encoding="utf-8") as csvfile:
+with open(os.path.join(data_path, "rp_pronouns.csv"), newline="\n", encoding="utf-8") as csvfile:
     rp_pronouns = list([item for sublist in csv.reader(csvfile) for item in sublist])
 
 
@@ -1005,15 +1010,3 @@ def fuck_text_blob(text: str) -> str:
     out_str = fix_punctuation_spacing(out_str)
     return out_str
 
-
-def main():
-    text = """reproduce Hey there guys today I'm making a cool python script that recompiles text into a more unreadable heap of garbage. Let me know what you guys think of it!"""
-    # text = 'Oop why did it double post that fuck'
-    print(f"before: {text}")
-    out_str = fuck_text_blob(text)
-    print()
-    print(f"after:  {out_str}")
-
-
-if __name__ == "__main__":
-    main()
