@@ -473,7 +473,6 @@ def get_runon_of_rhymes(
     token: str,
     min_runon: int = 1,
     max_runon: int = 3,
-    max_rhyme_dups: int = 0,
     allow_token_dupe: bool = False,
 ) -> Set[str]:
     selected_rhymes = set()
