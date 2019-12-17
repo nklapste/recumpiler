@@ -160,7 +160,7 @@ def owoer(token: str) -> str:
     ):
         owo_str = "owo" if decision(owo_vs_ouo_bais) else "ouo"
         token = re.sub(
-            r"o+", owo_str, token, flags=re.IGNORECASE, count=random.choice(range(0, 2))
+            r"(o+)", lambda match: (owo_str * len(match.group(1))).replace("oo", "o"), token, flags=re.IGNORECASE, count=random.choice(range(0, 2))
         )
 
     # TODO: UWU
