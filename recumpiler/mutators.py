@@ -52,8 +52,8 @@ REEE_probability = 0.06
 REEE_allcaps_probability = 0.3
 
 add_random_rp_action = True
-add_random_rp_mid_sentance_action_probability = 0.04
-add_random_rp_end_sentance_action_probability = 0.08
+add_random_rp_mid_sentance_action_probability = 0.005
+add_random_rp_end_sentance_action_probability = 0.02
 more_verbs_probability_decay = 0.4
 
 add_random_garbage = True
