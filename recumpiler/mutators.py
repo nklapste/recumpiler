@@ -163,7 +163,11 @@ def owoer(token: str) -> str:
     ):
         owo_str = "owo" if decision(owo_vs_ouo_bias) else "ouo"
         token = re.sub(
-            r"(o+)", lambda match: (owo_str * len(match.group(1))).replace("oo", "o"), token, flags=re.IGNORECASE, count=random.choice(range(0, 2))
+            r"(o+)",
+            lambda match: (owo_str * len(match.group(1))).replace("oo", "o"),
+            token,
+            flags=re.IGNORECASE,
+            count=random.choice(range(0, 2)),
         )
 
     # TODO: UWU
@@ -309,7 +313,7 @@ def garbage(token: str) -> str:
             "([nN])(o+)",
             lambda match: f"{match.group(1)}{'y' if decision(0.5) else ''}{'u'*(len(match.group(2))*random.randint(1,6))}",
             token,
-            flags=re.IGNORECASE
+            flags=re.IGNORECASE,
         )
     return token
 
@@ -407,7 +411,9 @@ def add_random_garbage_token():
 dir_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(dir_path, "data")
 
-with open(os.path.join(data_path, "emoji.csv"), newline="\n", encoding="utf-8") as csvfile:
+with open(
+    os.path.join(data_path, "emoji.csv"), newline="\n", encoding="utf-8"
+) as csvfile:
     text_face_emojis = list(
         [item for sublist in csv.reader(csvfile) for item in sublist]
     )
@@ -427,24 +433,35 @@ wrap_text_relevant_emoji_probability = 0.02
 
 
 def find_text_relevant_emoji(token: str) -> str:
-    if len(token) < 4:  # TODO: find better logic to avoid getting garbage or complete unrelated emojis
+    if (
+        len(token) < 4
+    ):  # TODO: find better logic to avoid getting garbage or complete unrelated emojis
         return token
-    results = emoji_database.execute("""select Emoji from Emoji_Sentiment_Data where "Unicode name" LIKE ?""", ("%"+token.upper()+"%",)).fetchall()
+    results = emoji_database.execute(
+        """select Emoji from Emoji_Sentiment_Data where "Unicode name" LIKE ?""",
+        ("%" + token.upper() + "%",),
+    ).fetchall()
     if results:
         return random.choice(results)[0]
 
 
-with open(os.path.join(data_path, "simple_text_emoji.csv"), newline="\n", encoding="utf-8") as csvfile:
+with open(
+    os.path.join(data_path, "simple_text_emoji.csv"), newline="\n", encoding="utf-8"
+) as csvfile:
     simple_text_emojis = list(
         [item for sublist in csv.reader(csvfile) for item in sublist]
     )
 
 
-with open(os.path.join(data_path, "action_verbs.csv"), newline="\n", encoding="utf-8") as csvfile:
+with open(
+    os.path.join(data_path, "action_verbs.csv"), newline="\n", encoding="utf-8"
+) as csvfile:
     action_verbs = list([item for sublist in csv.reader(csvfile) for item in sublist])
 
 
-with open(os.path.join(data_path, "rp_pronouns.csv"), newline="\n", encoding="utf-8") as csvfile:
+with open(
+    os.path.join(data_path, "rp_pronouns.csv"), newline="\n", encoding="utf-8"
+) as csvfile:
     rp_pronouns = list([item for sublist in csv.reader(csvfile) for item in sublist])
 
 
@@ -483,10 +500,7 @@ min_runon_rhymes = 1
 
 
 def get_runon_of_rhymes(
-    token: str,
-    min_runon: int = 1,
-    max_runon: int = 3,
-    allow_token_dupe: bool = False,
+    token: str, min_runon: int = 1, max_runon: int = 3, allow_token_dupe: bool = False,
 ) -> Set[str]:
     selected_rhymes = set()
     tried_nltk = False
@@ -755,7 +769,9 @@ def fuck_token(token: str) -> str:
     for token in tokens:
         relevant_emoji = None
         if decision(add_text_relevant_emoji_probability):
-            relevant_emoji = find_text_relevant_emoji(token)  # TODO: add ability to get multiple?
+            relevant_emoji = find_text_relevant_emoji(
+                token
+            )  # TODO: add ability to get multiple?
             if relevant_emoji and decision(wrap_text_relevant_emoji_probability):
                 fucked_tokens.append(relevant_emoji)
 
@@ -1042,4 +1058,3 @@ def fuck_text_blob(text: str) -> str:
     out_str = TreebankWordDetokenizer().detokenize(new_tokens)
     out_str = fix_punctuation_spacing(out_str)
     return out_str
-
