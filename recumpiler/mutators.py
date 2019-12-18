@@ -133,6 +133,10 @@ sub_to_subby_swap_probability = 0.3
 
 fucking_normies_addition = 0.3
 
+get_rhymes_probability = 0.01
+max_runon_rhymes = 3
+min_runon_rhymes = 1
+
 
 def owoer(token: str) -> str:
     token = re.sub(
@@ -492,11 +496,6 @@ def shuffle_str(token: str) -> str:
     token_str_list = list(token)
     random.shuffle(token_str_list)
     return "".join(token_str_list)
-
-
-get_rhymes_probability = 0.01
-max_runon_rhymes = 3
-min_runon_rhymes = 1
 
 
 def get_runon_of_rhymes(
