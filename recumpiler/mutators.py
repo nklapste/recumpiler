@@ -131,6 +131,8 @@ me_2_meow_swap_probability = 0.5
 hard_uwu_replace_probability = 0.3
 sub_to_subby_swap_probability = 0.3
 
+fucking_normies_addition = 0.3
+
 
 def owoer(token: str) -> str:
     token = re.sub(
@@ -837,6 +839,9 @@ def fuck_token(token: str) -> str:
             or "sksks" in fucked_token.lower()
         ):
             fucked_tokens.append(fuck_text_blob("save the turtles!"))
+
+        if decision(fucking_normies_addition) and "reee" in fucked_token.lower():
+            fucked_tokens.append(fuck_text_blob("fucking normies!"))
 
         if decision(get_rhymes_probability):
             for rhyme in get_runon_of_rhymes(
