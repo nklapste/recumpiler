@@ -22,6 +22,7 @@ import nltk
 import pandas
 import pronouncing
 from textblob import TextBlob, Word, Sentence
+import numpy as np
 
 
 from nltk.corpus import wordnet as wn
@@ -213,8 +214,17 @@ def garbage(token: str) -> str:
     # inserting gay
     token = re.sub(r"([a-fh-zA-FH-Z])a+y+", lambda match: f"{match.group(1)}gay", token)
 
-    # hewwo
+    # hello -> hewwo
     token = re.sub(r"([Hh])e+ll+o+?", lambda match: f"{match.group(1)}ewwo", token)
+
+    #  ello - >ewwo
+    if decision(0.4):
+        token = re.sub(
+            r"e+ll+o+?",
+            lambda match: f"ew{'w'*ceil(np.random.rayleigh(1.2))}o",
+            token,
+            flags=re.IGNORECASE,
+        )  # 2-6ish
 
     # cute -> koot
     token = re.sub(
