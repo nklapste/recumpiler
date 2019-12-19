@@ -233,6 +233,14 @@ def garbage(token: str) -> str:
         token,
     )
 
+    # ove -> wuv
+    if decision(0.7):
+        token = re.sub(
+            r"(o+)ve",
+            lambda match: f"w{'u'*len(match.group(1))}v",
+            token,
+        )
+
     # as -> ass asss
     if decision(0.5):
         token = re.sub(
