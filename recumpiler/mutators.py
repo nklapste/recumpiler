@@ -454,12 +454,12 @@ add_text_relevant_emoji_probability = 0.1
 wrap_text_relevant_emoji_probability = 0.02
 
 
-def find_text_relevant_emoji(token: str) -> str:
+def find_text_relevant_emoji(token: str) -> Optional[str]:
     if (
         len(token) < 4
     ):  # TODO: find better logic to avoid getting garbage or complete unrelated emojis
-        return token
-    results = emoji_database.execute(
+        return
+    results = get_emoji_database().execute(
         """select Emoji from Emoji_Sentiment_Data where "Unicode name" LIKE ?""",
         ("%" + token.upper() + "%",),
     ).fetchall()
