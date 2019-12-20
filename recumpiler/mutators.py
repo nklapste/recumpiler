@@ -31,6 +31,31 @@ from better_profanity import profanity
 import lorem
 import splitter
 
+import inflect
+from word2number import w2n
+
+inflect_engine = inflect.engine()
+
+
+num_to_word_probability = 0.3
+
+
+def num_to_word(token: str) -> str:
+    try:
+        return str(w2n.word_to_num(token))
+    except ValueError:
+        return token
+
+
+word_to_num_probability = 0.3
+
+
+def word_to_num(token: str) -> str:
+    try:
+        return inflect_engine.number_to_words(int(token))
+    except ValueError:
+        return token
+
 
 def knotter(token: str) -> str:
     token = re.sub(
@@ -794,6 +819,13 @@ def fuck_token(token: str) -> str:
 
         if decision(lazy_char_subbing_probability):
             token = lazy_char_subbing(token)
+
+        # TODO: this is a potential for unexpected behavior
+        if decision(word_to_num_probability):
+            token = word_to_num(token)
+        if decision(num_to_word_probability):
+            token = num_to_word(token)
+
         fucked_token = knotter(fuckyer(reeeer(rawrer(garbage(owoer(cummer(token)))))))
 
         if decision(add_extra_ed_probability):
