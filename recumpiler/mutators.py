@@ -33,6 +33,7 @@ import splitter
 
 import inflect
 from word2number import w2n
+import homoglyphs as hg
 
 inflect_engine = inflect.engine()
 
@@ -162,6 +163,24 @@ fucking_normies_addition = 0.3
 get_rhymes_probability = 0.01
 max_runon_rhymes = 3
 min_runon_rhymes = 1
+
+homofiy_probability = 0.3
+homofiy_percentage = 0.3
+
+
+def homoify(token: str, homo_percent: float = 0.3):
+    if len(token) <= 3:  # dont homoglyph censor stuff this small
+        return token
+    swaps = int(ceil(len(token) * homo_percent))
+    indexes = random.choices(range(1, len(token)), k=swaps)
+    for i in indexes:
+        token = "".join(
+            [
+                token[w] if w != i else random.choice(hg.Homoglyphs().get_combinations(token[w]))
+                for w in range(len(token))
+            ]
+        )
+    return bytes(token, "utf-8").decode("utf-8")
 
 
 def owoer(token: str) -> str:
@@ -882,6 +901,9 @@ def fuck_token(token: str) -> str:
         elif decision(back_tick_text_probability):
             fucked_token = back_tick_text(fucked_token)
 
+        if decision(homofiy_probability):
+            fucked_token = homoify(fucked_token, homofiy_probability)
+
         fucked_tokens.append(fucked_token)
 
         if decision(add_x3_if_token_has_rawr_probability) and (
@@ -918,7 +940,6 @@ def fuck_token(token: str) -> str:
 
         if relevant_emoji:
             fucked_tokens.append(relevant_emoji)
-
     return " ".join(fucked_tokens)
 
 
