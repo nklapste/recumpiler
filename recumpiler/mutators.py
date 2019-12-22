@@ -162,7 +162,7 @@ fucking_normies_addition = 0.3
 
 get_rhymes_probability = 0.01
 max_runon_rhymes = 3
-min_runon_rhymes = 1
+min_runon_rhymes = 0
 
 homofiy_probability = 0.3
 homofiy_percentage = 0.3
@@ -180,7 +180,7 @@ def homoify(token: str, homo_percent: float = 0.3):
                 for w in range(len(token))
             ]
         )
-    return bytes(token, "utf-8").decode("utf-8")
+    return token
 
 
 def owoer(token: str) -> str:
@@ -483,6 +483,21 @@ with open(
     text_face_emojis = list(
         [item for sublist in csv.reader(csvfile) for item in sublist]
     )
+
+
+def get_emoji_database():
+    emoji_database = sqlite3.connect(":memory:")
+    with open(
+            os.path.join(data_path, "emoji-sentiment-data",
+                         "Emoji_Sentiment_Data_v1.0.csv"),
+            newline="\n",
+            encoding="utf-8",
+    ) as csvfile:
+        df = pandas.read_csv(csvfile)
+        df.to_sql("Emoji_Sentiment_Data", emoji_database, if_exists="append",
+                  index=False)
+    return emoji_database
+
 
 emoji_database = sqlite3.connect(":memory:")
 with open(
@@ -853,6 +868,10 @@ def fuck_token(token: str) -> str:
         if decision(random_ending_y_probability):
             fucked_token = add_ending_y(fucked_token)
 
+        # TODO: likey making fu@k into k
+        # TODO: NOTE: indeed it is doing this fu@k
+        #   >>>list(TextBlob("fu@k").words)
+        #   ['fu', 'k']
         if add_random_plurals and decision(add_random_plurals_probability):
             for word in TextBlob(fucked_token).words:
                 fucked_token = Word(word).pluralize()
@@ -901,6 +920,9 @@ def fuck_token(token: str) -> str:
         elif decision(back_tick_text_probability):
             fucked_token = back_tick_text(fucked_token)
 
+        # TODO: likely also breaking the spacing between punctuation kittly 1!
+        # TODO: `fucked` went to `DS` investigate
+        # TODO: likely this is at fault
         if decision(homofiy_probability):
             fucked_token = homoify(fucked_token, homofiy_probability)
 
@@ -1128,3 +1150,8 @@ def fuck_text_blob(text: str) -> str:
     out_str = TreebankWordDetokenizer().detokenize(new_tokens)
     out_str = fix_punctuation_spacing(out_str)
     return out_str
+
+
+# TODO: fuck to ck
+# TODO chicken to n
+
