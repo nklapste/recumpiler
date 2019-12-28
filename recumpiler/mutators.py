@@ -285,6 +285,15 @@ def garbage(token: str) -> str:
             token,
         )
 
+    # one -> wun
+    if decision(0.7):
+        token = re.sub(
+            r"one",
+            "wun",
+            token,
+            flags=re.IGNORECASE
+        )
+
     # as -> ass asss
     if decision(0.5):
         token = re.sub(
