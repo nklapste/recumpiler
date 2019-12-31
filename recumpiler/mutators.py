@@ -176,7 +176,9 @@ def homoify(token: str, homo_percent: float = 0.3):
     for i in indexes:
         token = "".join(
             [
-                token[w] if w != i else random.choice(hg.Homoglyphs().get_combinations(token[w]))
+                token[w]
+                if w != i
+                else random.choice(hg.Homoglyphs().get_combinations(token[w]))
                 for w in range(len(token))
             ]
         )
@@ -279,20 +281,11 @@ def garbage(token: str) -> str:
 
     # ove -> wuv
     if decision(0.7):
-        token = re.sub(
-            r"(o+)ve",
-            lambda match: f"w{'u'*len(match.group(1))}v",
-            token,
-        )
+        token = re.sub(r"(o+)ve", lambda match: f"w{'u'*len(match.group(1))}v", token,)
 
     # one -> wun
     if decision(0.7):
-        token = re.sub(
-            r"one",
-            "wun",
-            token,
-            flags=re.IGNORECASE
-        )
+        token = re.sub(r"one", "wun", token, flags=re.IGNORECASE)
 
     # as -> ass asss
     if decision(0.5):
@@ -497,14 +490,16 @@ with open(
 def get_emoji_database():
     emoji_database = sqlite3.connect(":memory:")
     with open(
-            os.path.join(data_path, "emoji-sentiment-data",
-                         "Emoji_Sentiment_Data_v1.0.csv"),
-            newline="\n",
-            encoding="utf-8",
+        os.path.join(
+            data_path, "emoji-sentiment-data", "Emoji_Sentiment_Data_v1.0.csv"
+        ),
+        newline="\n",
+        encoding="utf-8",
     ) as csvfile:
         df = pandas.read_csv(csvfile)
-        df.to_sql("Emoji_Sentiment_Data", emoji_database, if_exists="append",
-                  index=False)
+        df.to_sql(
+            "Emoji_Sentiment_Data", emoji_database, if_exists="append", index=False
+        )
     return emoji_database
 
 
@@ -527,10 +522,14 @@ def find_text_relevant_emoji(token: str) -> Optional[str]:
         len(token) < 4
     ):  # TODO: find better logic to avoid getting garbage or complete unrelated emojis
         return
-    results = get_emoji_database().execute(
-        """select Emoji from Emoji_Sentiment_Data where "Unicode name" LIKE ?""",
-        ("%" + token.upper() + "%",),
-    ).fetchall()
+    results = (
+        get_emoji_database()
+        .execute(
+            """select Emoji from Emoji_Sentiment_Data where "Unicode name" LIKE ?""",
+            ("%" + token.upper() + "%",),
+        )
+        .fetchall()
+    )
     if results:
         return random.choice(results)[0]
 
@@ -1163,4 +1162,3 @@ def fuck_text_blob(text: str) -> str:
 
 # TODO: fuck to ck
 # TODO chicken to n
-
