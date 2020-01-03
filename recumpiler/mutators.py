@@ -263,6 +263,15 @@ def garbage(token: str) -> str:
     # hello -> hewwo
     token = re.sub(r"([Hh])e+ll+o+?", lambda match: f"{match.group(1)}ewwo", token)
 
+    # er -> ur
+    if decision(0.4):
+        token = re.sub(
+            r"e+r+",
+            lambda match: f"u{'r' * ceil(np.random.rayleigh(1.2))}",
+            token,
+            flags=re.IGNORECASE,
+        )
+
     #  ello - >ewwo
     if decision(0.4):
         token = re.sub(
