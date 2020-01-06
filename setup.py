@@ -74,10 +74,9 @@ class Install(_install):
 setup(
     name="recumpiler",
     version=VERSION,
-    ## TODO: populate
-    # description="",
-    # long_description=open("README.rst").read(),
-    # long_description_content_type="text/x-rst",
+    description="Recompile text to be semi-readable memey garbage.",
+    long_description=open("README.rst", encoding="UTF-8").read(),
+    long_description_content_type="text/x-rst",
     keywords="joke funny vulgar stupid text",
     author="Nathan Klapstein",
     author_email="nklapste@ualberta.ca",
