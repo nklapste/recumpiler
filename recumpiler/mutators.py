@@ -538,9 +538,7 @@ def get_emoji_database():
         encoding="utf-8",
     ) as csvfile:
         df = pandas.read_csv(csvfile)
-        df.to_sql(
-            "Emoji_Sentiment_Data", emoji_database, if_exists="append", index=False
-        )
+        df.to_sql("Emoji_Sentiment_Data", emoji_database, if_exists="fail", index=False)
     return emoji_database
 
 
