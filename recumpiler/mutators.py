@@ -3,9 +3,6 @@
 
 """garbage code to make garbage text"""
 
-# import nltk
-# nltk.download('wordnet')
-# nltk.download('cmudict')
 # TODO: another download was needed for nltk for this dunno what thou
 import os
 import sqlite3
@@ -18,44 +15,26 @@ import random
 import string
 from math import ceil
 
-import nltk
 import pandas
 import pronouncing
 from textblob import TextBlob, Word, Sentence
 import numpy as np
 
-
+import nltk
 from nltk.corpus import wordnet as wn
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 from better_profanity import profanity
 import lorem
-import splitter
 
-import inflect
+# TODO: issues with pyenchant
+# import splitter
+
 from word2number import w2n
 import homoglyphs as hg
 
+import inflect
+
 inflect_engine = inflect.engine()
-
-
-num_to_word_probability = 0.3
-
-
-def num_to_word(token: str) -> str:
-    try:
-        return str(w2n.word_to_num(token))
-    except ValueError:
-        return token
-
-
-word_to_num_probability = 0.3
-
-
-def word_to_num(token: str) -> str:
-    try:
-        return inflect_engine.number_to_words(int(token))
-    except ValueError:
-        return token
 
 
 def knotter(token: str) -> str:
@@ -69,6 +48,10 @@ def knotter(token: str) -> str:
 
 
 # TODO: refactor this global garbage
+
+
+num_to_word_probability = 0.3
+word_to_num_probability = 0.3
 
 common_misspellings_probability = 0.2
 hard_owo_replace_probability = 0.2
@@ -166,6 +149,20 @@ min_runon_rhymes = 0
 
 homofiy_probability = 0.3
 homofiy_percentage = 0.3
+
+
+def num_to_word(token: str) -> str:
+    try:
+        return str(w2n.word_to_num(token))
+    except ValueError:
+        return token
+
+
+def word_to_num(token: str) -> str:
+    try:
+        return inflect_engine.number_to_words(int(token))
+    except ValueError:
+        return token
 
 
 def homoify(token: str, homo_percent: float = 0.3):
@@ -776,7 +773,7 @@ def get_token_random_definition(token: str) -> Optional[str]:
         return random.choice(synsets).definition()
 
 
-def fuck_sentence(sentance: Sentence) -> List[str]:
+def recumpile_sentence(sentance: Sentence) -> List[str]:
     new_tokens = []
     # TODO: determine mood classifier for sentence and add respective emoji
 
@@ -798,24 +795,24 @@ def fuck_sentence(sentance: Sentence) -> List[str]:
             add_husky = False
 
         # processing
-        fucked_token = fuck_token(token)
+        recumpiled_token = recumpile_token(token)
 
         # post processing
-        new_tokens.append(fucked_token)
+        new_tokens.append(recumpiled_token)
 
         if decision(add_definition_in_parenthesis_probability):
             definiton = get_token_random_definition(token)
             if definiton:
                 new_tokens += [
-                    f"[[{fuck_token('DEFINITION')} {token.upper()}:",
-                    f"{fuck_text_blob(definiton)}]]",
+                    f"[[{recumpile_token('DEFINITION')} {token.upper()}:",
+                    f"{recumpile_text(definiton)}]]",
                 ]
 
         if add_husky:
-            new_tokens.append(fuck_token("husky"))
+            new_tokens.append(recumpile_token("husky"))
 
         if add_random_garbage and decision(add_random_garbage_probability):
-            new_tokens.append(fuck_token(add_random_garbage_token()))
+            new_tokens.append(recumpile_token(add_random_garbage_token()))
         if add_randomly_text_face_emoji and decision(
             add_randomly_text_face_emoji_probability
         ):
@@ -846,11 +843,11 @@ def add_ending_y(token: str) -> str:
 def get_random_lorem_ipsum() -> str:
     """get lorem ipsum sentence"""
     if decision(lorem_ipsum_fuck_probability):
-        fuck_sentence(Sentence(lorem.sentence()))
+        recumpile_sentence(Sentence(lorem.sentence()))
     return lorem.sentence()
 
 
-def fuck_token(token: str) -> str:
+def recumpile_token(token: str) -> str:
     # TODO: determine mood classifier for token and add respective emoji
     if decision(split_compound_word_probability):
         tokens = split_compound_word(token)
@@ -957,23 +954,23 @@ def fuck_token(token: str) -> str:
             or "sksks" in fucked_token.lower()
         ):
             for i in range(random.randint(1, 2)):
-                fucked_tokens.append(fuck_token("andioop"))
+                fucked_tokens.append(recumpile_token("andioop"))
         if decision(adding_ending_ksksk_save_the_turtles_probability) and (
             fucked_token.lower().endswith("ksk")
             or fucked_token.lower().endswith("sks")
             or "ksksk" in fucked_token.lower()
             or "sksks" in fucked_token.lower()
         ):
-            fucked_tokens.append(fuck_text_blob("save the turtles!"))
+            fucked_tokens.append(recumpile_text("save the turtles!"))
 
         if decision(fucking_normies_addition) and "reee" in fucked_token.lower():
-            fucked_tokens.append(fuck_text_blob("fucking normies!"))
+            fucked_tokens.append(recumpile_text("fucking normies!"))
 
         if decision(get_rhymes_probability):
             for rhyme in get_runon_of_rhymes(
                 token, max_runon=max_runon_rhymes, min_runon=min_runon_rhymes
             ):
-                fucked_rhyme = fuck_token(rhyme)
+                fucked_rhyme = recumpile_token(rhyme)
                 print(f"adding rhyme {token} {rhyme} {fucked_rhyme}")
                 fucked_tokens.append(fucked_rhyme)
 
@@ -998,7 +995,7 @@ def get_random_rp_action_sentence() -> str:
             additional_verb = get_random_action_verb()
             if decision(0.5):  # TODO: config
                 additional_verb = Word(additional_verb).lemmatize()
-            additional_verb = fuck_token(additional_verb)
+            additional_verb = recumpile_token(additional_verb)
             additional_verb = Word(additional_verb).pluralize()
             more_verbs.append(additional_verb)
         else:
@@ -1010,7 +1007,7 @@ def get_random_rp_action_sentence() -> str:
         noun = Word(noun).lemmatize()
 
     # TODO: add boolean for enable
-    noun = fuck_token(noun)
+    noun = recumpile_token(noun)
     noun = Word(noun).pluralize()
     return to_rp_text(f"{' and '.join(more_verbs)}{' ' if more_verbs else ''}{noun}")
 
@@ -1118,11 +1115,14 @@ def back_tick_text(token: str) -> str:
     return f"`{token.strip('`')}`"
 
 
+# TODO: issues with pyenchant quick
+#  patch to make this function do nothing for now
 def split_compound_word(token: str) -> List[str]:
-    tokens = splitter.split(str(token))
-    if isinstance(tokens, list):
-        return tokens
-    return [tokens]
+    # tokens = splitter.split(str(token))
+    # if isinstance(tokens, list):
+    #     return tokens
+    # return [tokens]
+    return [token]
 
 
 def add_extra_ed(token: str) -> str:
@@ -1157,12 +1157,12 @@ def replace_with_random_synonym(token: str) -> str:
     return token
 
 
-def fuck_text_blob(text: str) -> str:
+def recumpile_text(text: str) -> str:
     new_tokens = []
-
+    # TODO: preserve spacing better
     # TODO: go sentance by sentance token by token all for sentiment analysis
     for sentence in TextBlob(text).sentences:
-        new_tokens += fuck_sentence(sentence)
+        new_tokens += recumpile_sentence(sentence)
 
     out_str = TreebankWordDetokenizer().detokenize(new_tokens)
     out_str = fix_punctuation_spacing(out_str)

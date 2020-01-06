@@ -4,7 +4,7 @@
 """main argparse entrypoint"""
 
 import argparse
-from recumpiler.mutators import fuck_text_blob
+from recumpiler.mutators import recumpile_text
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -23,14 +23,14 @@ def get_parser() -> argparse.ArgumentParser:
 def recumpile_repl():
     while True:
         text = input("recumpiler>")
-        fucked_text = fuck_text_blob(text)
+        fucked_text = recumpile_text(text)
         print(fucked_text)
 
 
 def main():
     args = get_parser().parse_args()
     if args.text:
-        fucked_text = fuck_text_blob(args.text)
+        fucked_text = recumpile_text(args.text)
         print(fucked_text)
     if args.repl:
         recumpile_repl()
