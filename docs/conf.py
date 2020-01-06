@@ -9,7 +9,7 @@
 
 # -- Project information -----------------------------------------------------
 
-copyright = "2019, Nathan Klapstein"
+copyright = "2020, Nathan Klapstein"
 author = "Nathan Klapstein"
 project = "recumpiler"
 
