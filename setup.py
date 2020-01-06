@@ -117,6 +117,6 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
     ],
-    cmdclass={"test": PyTest, "lint": Pylint},
+    cmdclass={"test": PyTest, "lint": Pylint, "install": Install},
     entry_points={"console_scripts": ["recumpiler = recumpiler.__main__:main"]},
 )
