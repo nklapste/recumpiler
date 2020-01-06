@@ -9,8 +9,10 @@ import sys
 import os
 
 from setuptools import setup, find_packages
+from setuptools.command.develop import develop
+from setuptools.command.egg_info import egg_info
 from setuptools.command.test import test
-from setuptools.command.install import install as _install
+from setuptools.command.install import install
 
 
 def find_version(*file_paths):
@@ -61,14 +63,30 @@ class PyTest(test):
         sys.exit(errno)
 
 
-class Install(_install):
-    def run(self):
-        _install.do_egg_install(self)
-        import nltk
+def download_required_nltk_data():
+    import nltk
 
-        nltk.download("wordnet")
-        nltk.download("cmudict")
-        nltk.download("punkt")
+    nltk.download("wordnet")
+    nltk.download("cmudict")
+    nltk.download("punkt")
+
+
+class CustomInstallCommand(install):
+    def run(self):
+        install.run(self)
+        download_required_nltk_data()
+
+
+class CustomDevelopCommand(develop):
+    def run(self):
+        develop.run(self)
+        download_required_nltk_data()
+
+
+class CustomEggInfoCommand(egg_info):
+    def run(self):
+        egg_info.run(self)
+        download_required_nltk_data()
 
 
 setup(
@@ -117,6 +135,12 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
     ],
-    cmdclass={"test": PyTest, "lint": Pylint, "install": Install},
+    cmdclass={
+        "test": PyTest,
+        "lint": Pylint,
+        "install": CustomInstallCommand,
+        "develop": CustomDevelopCommand,
+        "egg_info": CustomEggInfoCommand,
+    },
     entry_points={"console_scripts": ["recumpiler = recumpiler.__main__:main"]},
 )
