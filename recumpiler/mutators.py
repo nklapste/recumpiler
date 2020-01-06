@@ -9,8 +9,10 @@ import random
 import re
 import sqlite3
 import string
+from functools import wraps
 from math import ceil
 from typing import List, Optional, Set
+from logging import getLogger
 
 import homoglyphs as hg
 import inflect
@@ -30,10 +32,31 @@ from word2number import w2n
 
 inflect_engine = inflect.engine()
 
+__log__ = getLogger(__name__)
 
+
+def logged_mutator(f):
+    @wraps(f)
+    def wrapper(*args, **kwds):
+        output = f(*args, **kwds)
+        __log__.debug(
+            {
+                "message": "called mutator",
+                "mutator": f.__name__,
+                "args": args,
+                "kwargs": kwds,
+                "output": output,
+            }
+        )
+        return output
+
+    return wrapper
+
+
+@logged_mutator
 def knotter(token: str) -> str:
     token = re.sub(
-        r"no+t",
+        r"(([^kK]|^)no+t)",
         lambda match: f"kn{'o' * random.choice(range(1, 3))}t",
         token,
         flags=re.IGNORECASE,
@@ -147,6 +170,7 @@ homofiy_percentage = 0.3
 back_tick_text_probability = 0.05
 
 
+@logged_mutator
 def num_to_word(token: str) -> str:
     try:
         return str(w2n.word_to_num(token))
@@ -154,6 +178,7 @@ def num_to_word(token: str) -> str:
         return token
 
 
+@logged_mutator
 def word_to_num(token: str) -> str:
     try:
         return inflect_engine.number_to_words(int(token))
@@ -161,6 +186,7 @@ def word_to_num(token: str) -> str:
         return token
 
 
+@logged_mutator
 def homoify(token: str, homo_percent: float = 0.3):
     if len(token) <= 3:  # dont homoglyph censor stuff this small
         return token
@@ -178,6 +204,7 @@ def homoify(token: str, homo_percent: float = 0.3):
     return token
 
 
+@logged_mutator
 def owoer(token: str) -> str:
     # TODO: owo usually goes to owoo should supress.
 
@@ -235,6 +262,7 @@ def owoer(token: str) -> str:
     return token
 
 
+@logged_mutator
 def fuckyer(token: str) -> str:
     extra_fun = ""
     y_choice_1 = ("y" if decision(0.5) else "i") * random.choice(range(1, 5))
@@ -251,6 +279,7 @@ def fuckyer(token: str) -> str:
     return token
 
 
+@logged_mutator
 def garbage(token: str) -> str:
     # inserting gay
     token = re.sub(r"([a-fh-zA-FH-Z])a+y+", lambda match: f"{match.group(1)}gay", token)
@@ -390,6 +419,7 @@ def garbage(token: str) -> str:
     return token
 
 
+@logged_mutator
 def reeeer(token: str) -> str:
     if decision(REEE_probability):
         token = re.sub(
@@ -412,12 +442,14 @@ def rawrer(token: str) -> str:
     return token
 
 
+@logged_mutator
 def jizzer(token: str) -> str:
     token = re.sub(r"(.iz+)", "jizz", token)
     return token
 
 
 # TODO: reval this some of it is ineffective i think
+@logged_mutator
 def cummer(token: str) -> str:
     token = re.sub(r"(.ome|co+m|co+n{1,3})", "cum", token)
     token = re.sub(r"(c.{0,2}u+m)", "cum", token)
@@ -476,6 +508,7 @@ garbage_tokens = [
 ]
 
 
+@logged_mutator
 def add_random_garbage_token():
     return random.choice(garbage_tokens)
 
@@ -521,6 +554,7 @@ add_text_relevant_emoji_probability = 0.1
 wrap_text_relevant_emoji_probability = 0.02
 
 
+@logged_mutator
 def find_text_relevant_emoji(token: str) -> Optional[str]:
     if (
         len(token) < 4
@@ -558,10 +592,12 @@ with open(
     rp_pronouns = list([item for sublist in csv.reader(csvfile) for item in sublist])
 
 
+@logged_mutator
 def get_random_text_face_emojis():
     return random.choice(text_face_emojis)
 
 
+@logged_mutator
 def get_random_simple_text_emojis():
     return random.choice(simple_text_emojis)
 
@@ -570,6 +606,7 @@ def decision(probability) -> bool:
     return random.random() < probability
 
 
+@logged_mutator
 def generate_spongebob_text(token: str) -> str:
     """gEnErAtEs sPoNgEbOb mEmE TeXt"""
     spongebob_text = ""
@@ -581,12 +618,14 @@ def generate_spongebob_text(token: str) -> str:
     return spongebob_text
 
 
+@logged_mutator
 def shuffle_str(token: str) -> str:
     token_str_list = list(token)
     random.shuffle(token_str_list)
     return "".join(token_str_list)
 
 
+@logged_mutator
 def get_runon_of_rhymes(
     token: str, min_runon: int = 1, max_runon: int = 3, allow_token_dupe: bool = False,
 ) -> Set[str]:
@@ -631,10 +670,12 @@ def get_runon_of_rhymes(
     return selected_rhymes
 
 
+@logged_mutator
 def get_pronouncing_rhyme(token: str) -> List[str]:
     return pronouncing.rhymes(token)
 
 
+@logged_mutator
 def get_nltk_rymes(token: str, level) -> List[str]:
     # TODO: stub
     def rhyme(inp, level):
@@ -655,6 +696,7 @@ def get_nltk_rymes(token: str, level) -> List[str]:
     return list(rhyme(token, level))
 
 
+@logged_mutator
 def over_emphasise_punctuation(token: str, max_fuck: int = 4) -> str:
     if token == "?":
         token += "".join(
@@ -698,18 +740,22 @@ def over_emphasise_punctuation(token: str, max_fuck: int = 4) -> str:
     return token
 
 
+@logged_mutator
 def to_rp_text(token: str) -> str:
     return f"*{token}*"
 
 
+@logged_mutator
 def get_random_action_verb():
     return random.choice(action_verbs)
 
 
+@logged_mutator
 def get_random_rp_pronoun():
     return random.choice(rp_pronouns)
 
 
+@logged_mutator
 def random_swap_char(token: str, swaps_percent: float = 0.2) -> str:
     if len(token) < 3:  # dont do this for small tokens as they become un decipherable
         return token
@@ -725,6 +771,7 @@ def random_swap_char(token: str, swaps_percent: float = 0.2) -> str:
     return token
 
 
+@logged_mutator
 def random_insert_char(token: str, insert_percent: float = 0.1) -> str:
     swaps = int(ceil(len(token) * insert_percent))
     indexes = random.choices(range(len(token)), k=swaps)
@@ -735,6 +782,7 @@ def random_insert_char(token: str, insert_percent: float = 0.1) -> str:
     return token
 
 
+@logged_mutator
 def token_to_leet(token: str) -> str:
     if len(token) < 5:  # leet speaking small text has hard to read results
         return token
@@ -755,6 +803,7 @@ def token_to_leet(token: str) -> str:
 
 
 # TODO: lots of options maybe something learned?
+@logged_mutator
 def utf_8_char_swaps(token: str) -> str:
     if decision(0.5):
         token = re.sub(r"ae", "æ", token)
@@ -765,12 +814,14 @@ def utf_8_char_swaps(token: str) -> str:
     return token
 
 
+@logged_mutator
 def get_token_random_definition(token: str) -> Optional[str]:
     synsets = wn.synsets(token)
     if synsets:
         return random.choice(synsets).definition()
 
 
+@logged_mutator
 def recumpile_sentence(sentance: Sentence) -> List[str]:
     new_tokens = []
     # TODO: determine mood classifier for sentence and add respective emoji
@@ -832,10 +883,12 @@ def recumpile_sentence(sentance: Sentence) -> List[str]:
     return new_tokens
 
 
+@logged_mutator
 def add_ending_y(token: str) -> str:
     return re.sub(r"([a-zA-Z]{4,}[^sy])", lambda match: f"{match.group(1)}y", token)
 
 
+@logged_mutator
 def get_random_lorem_ipsum() -> str:
     """get lorem ipsum sentence"""
     lorem_sentence = lorem.sentence()
@@ -848,6 +901,7 @@ def get_random_lorem_ipsum() -> str:
     return lorem_sentence
 
 
+@logged_mutator
 def recumpile_token(token: str) -> str:
     # TODO: determine mood classifier for token and add respective emoji
     if decision(split_compound_word_probability):
@@ -979,6 +1033,7 @@ def recumpile_token(token: str) -> str:
     return " ".join(fucked_tokens)
 
 
+@logged_mutator
 def bold_text(token: str) -> str:
     if not token.strip(
         string.punctuation
@@ -987,6 +1042,7 @@ def bold_text(token: str) -> str:
     return f"**{token.strip('*')}**"
 
 
+@logged_mutator
 def get_random_rp_action_sentence() -> str:
     more_verbs = []
     more_verbs_probability = 1
@@ -1012,6 +1068,7 @@ def get_random_rp_action_sentence() -> str:
     return to_rp_text(f"{' and '.join(more_verbs)}{' ' if more_verbs else ''}{noun}")
 
 
+@logged_mutator
 def lazy_char_subbing(token: str) -> str:
     """e.g.you -> u are -> r"""
     # TODO: better capital replacement
@@ -1072,6 +1129,7 @@ def lazy_char_subbing(token: str) -> str:
 
 
 # TODO: funny -> funni spells -> spellz
+@logged_mutator
 def common_mispellings(token: str) -> str:
     # TODO: cleanup
     token = re.sub(
@@ -1098,6 +1156,7 @@ def common_mispellings(token: str) -> str:
     return token
 
 
+@logged_mutator
 def fix_punctuation_spacing(text: str) -> str:
     # TODO: this is a meh way to solve punct being incorrectly joined should investigate
     return re.sub(
@@ -1105,6 +1164,7 @@ def fix_punctuation_spacing(text: str) -> str:
     )
 
 
+@logged_mutator
 def back_tick_text(token: str) -> str:
     if not token.strip(
         string.punctuation
@@ -1115,6 +1175,7 @@ def back_tick_text(token: str) -> str:
 
 # TODO: issues with pyenchant quick
 #  patch to make this function do nothing for now
+@logged_mutator
 def split_compound_word(token: str) -> List[str]:
     # tokens = splitter.split(str(token))
     # if isinstance(tokens, list):
@@ -1123,6 +1184,7 @@ def split_compound_word(token: str) -> List[str]:
     return [token]
 
 
+@logged_mutator
 def add_extra_ed(token: str) -> str:
     return re.sub(
         "([a-zA-Z]{2,})(d|ed)$",
@@ -1133,6 +1195,7 @@ def add_extra_ed(token: str) -> str:
 
 
 # TODO: grabagey code duplication
+@logged_mutator
 def custom_censoring(swear_word: str, censor_percent: float = 0.25) -> str:
     if len(swear_word) <= 3:  # dont censor stuff this small
         return swear_word
@@ -1149,16 +1212,18 @@ def custom_censoring(swear_word: str, censor_percent: float = 0.25) -> str:
     return swear_word
 
 
+@logged_mutator
 def replace_with_random_synonym(token: str) -> str:
     # TODO: fill in with all synonyms for lulz?
     # TODO: download manual dictionary
     return token
 
 
+@logged_mutator
 def recumpile_text(text: str) -> str:
     new_tokens = []
     # TODO: preserve spacing better
-    # TODO: go sentance by sentance token by token all for sentiment analysis
+    # TODO: go sentence by sentence token by token all for sentiment analysis
     for sentence in TextBlob(text).sentences:
         new_tokens += recumpile_sentence(sentence)
 

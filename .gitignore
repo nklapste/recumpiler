@@ -132,4 +132,4 @@ tokens/
 dev/
 
 # output
-discord_scraper_output/
+logs/
