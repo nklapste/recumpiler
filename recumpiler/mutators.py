@@ -150,6 +150,8 @@ min_runon_rhymes = 0
 homofiy_probability = 0.3
 homofiy_percentage = 0.3
 
+back_tick_text_probability = 0.05
+
 
 def num_to_word(token: str) -> str:
     try:
@@ -1102,9 +1104,6 @@ def fix_punctuation_spacing(text: str) -> str:
     return re.sub(
         "([^\s]) ([!\?.,]+)", lambda match: f"{match.group(1)}{match.group(2)}", text
     )
-
-
-back_tick_text_probability = 0.05
 
 
 def back_tick_text(token: str) -> str:
