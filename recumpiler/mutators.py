@@ -1046,13 +1046,14 @@ def lazy_char_subbing(token: str) -> str:
         flags=re.IGNORECASE,
     )
 
-    # what -> wat
-    token = re.sub(
-        "^wha+t$",
-        lambda match: f"w{'a' * random.randint(1, 4)}t",
-        token,
-        flags=re.IGNORECASE,
-    )
+    # what -> wat OR wut
+    if decision(0.5):
+        token = re.sub(
+            "^wha+t$",
+            lambda match: f"w{random.choice(['a','u']) * random.randint(1, 4)}t",
+            token,
+            flags=re.IGNORECASE,
+        )
 
     # er -> ur
     token = re.sub(
