@@ -56,7 +56,7 @@ def logged_mutator(f):
 @logged_mutator
 def knotter(token: str) -> str:
     token = re.sub(
-        r"no+t",
+        r"(([^kK]|^)no+t)",
         lambda match: f"kn{'o' * random.choice(range(1, 3))}t",
         token,
         flags=re.IGNORECASE,
