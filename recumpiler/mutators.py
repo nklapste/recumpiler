@@ -1223,7 +1223,7 @@ def replace_with_random_synonym(token: str) -> str:
 def recumpile_text(text: str) -> str:
     new_tokens = []
     # TODO: preserve spacing better
-    # TODO: go sentance by sentance token by token all for sentiment analysis
+    # TODO: go sentence by sentence token by token all for sentiment analysis
     for sentence in TextBlob(text).sentences:
         new_tokens += recumpile_sentence(sentence)
 
