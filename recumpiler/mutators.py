@@ -779,8 +779,6 @@ def recumpile_sentence(sentance: Sentence) -> List[str]:
     # TODO: determine mood classifier for sentence and add respective emoji
 
     for token in sentance.tokens:
-        original_token = token
-
         if decision(random_synonym_probability):
             token = replace_with_random_synonym(token)
         if decision(censor_profanity_probability) and profanity.contains_profanity(
