@@ -184,6 +184,8 @@ def homoify(token: str, homo_percent: float = 0.3):
 
 
 def owoer(token: str) -> str:
+    # TODO: owo usually goes to owoo should supress.
+
     token = re.sub(
         r"(ou)([^o])?",
         lambda match: f"ouo{match.group(2) or ''}",
