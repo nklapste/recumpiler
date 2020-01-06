@@ -12,7 +12,6 @@ def get_parser() -> argparse.ArgumentParser:
 
     group = parser.add_argument_group(title="Input")
     group = group.add_mutually_exclusive_group(required=True)
-
     group.add_argument("-t", "--text", help="Text to recumpile.")
     group.add_argument(
         "--repl", help="Accept stdin and create recumpiler REPL.", action="store_true"
