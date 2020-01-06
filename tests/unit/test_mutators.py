@@ -9,7 +9,7 @@ import pytest
 from recumpiler.mutators import fuck_text_blob
 
 
-@pytest.mark.timeout(60)
+@pytest.mark.timeout(120)
 @pytest.mark.parametrize(
     "text",
     [
