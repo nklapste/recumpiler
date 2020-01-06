@@ -972,7 +972,6 @@ def recumpile_token(token: str) -> str:
                 token, max_runon=max_runon_rhymes, min_runon=min_runon_rhymes
             ):
                 fucked_rhyme = recumpile_token(rhyme)
-                print(f"adding rhyme {token} {rhyme} {fucked_rhyme}")
                 fucked_tokens.append(fucked_rhyme)
 
         if relevant_emoji:
