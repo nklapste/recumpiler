@@ -49,7 +49,7 @@ def add_log_parser(parser):
 def init_logging(args, log_file_path):
     """Intake a argparse.parse_args() object and setup python logging"""
     handlers_ = []
-    log_format = logging.Formatter(fmt="[%(asctime)s] [%(levelname)s] - %(message)s")
+    log_format = logging.Formatter(fmt="%(asctime)s %(levelname)s %(message)s")
     if args.log_dir:
         os.makedirs(args.log_dir, exist_ok=True)
         file_handler = TimedRotatingFileHandler(
