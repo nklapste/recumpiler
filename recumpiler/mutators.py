@@ -3,35 +3,30 @@
 
 """garbage code to make garbage text"""
 
-import os
-import sqlite3
-from typing import List, Optional, Set
-import re
-
 import csv
-
+import os
 import random
+import re
+import sqlite3
 import string
 from math import ceil
+from typing import List, Optional, Set
 
+import homoglyphs as hg
+import inflect
+import lorem
+import nltk
+import numpy as np
 import pandas
 import pronouncing
-from textblob import TextBlob, Word, Sentence
-import numpy as np
-
-import nltk
+from better_profanity import profanity
 from nltk.corpus import wordnet as wn
 from nltk.tokenize.treebank import TreebankWordDetokenizer
-from better_profanity import profanity
-import lorem
+from textblob import TextBlob, Word, Sentence
+from word2number import w2n
 
 # TODO: issues with pyenchant
 # import splitter
-
-from word2number import w2n
-import homoglyphs as hg
-
-import inflect
 
 inflect_engine = inflect.engine()
 
