@@ -123,7 +123,7 @@ ksksk_enlargement_probability = 0.7
 owo_vs_ouo_bias = 0.5
 
 random_lorem_ipsum_probability = 0.015
-lorem_ipsum_fuck_probability = 0.3
+lorem_ipsum_fuck_probability = 0.5
 
 add_extra_ed_probability = 0.05
 split_compound_word_probability = 0.03
@@ -843,9 +843,14 @@ def add_ending_y(token: str) -> str:
 
 def get_random_lorem_ipsum() -> str:
     """get lorem ipsum sentence"""
+    lorem_sentence = lorem.sentence()
     if decision(lorem_ipsum_fuck_probability):
-        recumpile_sentence(Sentence(lorem.sentence()))
-    return lorem.sentence()
+        lorem_sentence = fix_punctuation_spacing(
+            TreebankWordDetokenizer().detokenize(
+                recumpile_sentence(Sentence(lorem_sentence))
+            )
+        )
+    return lorem_sentence
 
 
 def recumpile_token(token: str) -> str:
