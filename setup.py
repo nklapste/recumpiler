@@ -63,30 +63,37 @@ class PyTest(test):
         sys.exit(errno)
 
 
-def download_required_nltk_data():
+REQUIRED_NLTK_DATA_PACKAGES = [
+    "wordnet",
+    "cmudict",
+    "punkt",
+]
+
+
+def download_required_nltk_data_packages():
+    """Download the required nltk data packages"""
     import nltk
 
-    nltk.download("wordnet")
-    nltk.download("cmudict")
-    nltk.download("punkt")
+    for package in REQUIRED_NLTK_DATA_PACKAGES:
+        nltk.download(package)
 
 
 class CustomInstallCommand(install):
     def run(self):
         install.run(self)
-        download_required_nltk_data()
+        download_required_nltk_data_packages()
 
 
 class CustomDevelopCommand(develop):
     def run(self):
         develop.run(self)
-        download_required_nltk_data()
+        download_required_nltk_data_packages()
 
 
 class CustomEggInfoCommand(egg_info):
     def run(self):
         egg_info.run(self)
-        download_required_nltk_data()
+        download_required_nltk_data_packages()
 
 
 setup(
