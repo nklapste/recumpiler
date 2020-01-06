@@ -3,7 +3,6 @@
 
 """garbage code to make garbage text"""
 
-# TODO: another download was needed for nltk for this dunno what thou
 import os
 import sqlite3
 from typing import List, Optional, Set
