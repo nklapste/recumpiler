@@ -23,6 +23,7 @@ from recumpiler.mutators import recumpile_text
         "ksksks kkskskss kkkksksksksk kkkskskskks kkkkksksksk kksksksk sksksks ksksksks",
         "not not noot nooot not not noot not not not nothing not",
         "knot knot knot knot knot",
+        "apple " * 20,
     ],
 )
 def test_mutate_text_blob(text):
