@@ -40,7 +40,13 @@ def logged_mutator(f):
     def wrapper(*args, **kwds):
         output = f(*args, **kwds)
         __log__.debug(
-            f"called Mutator: {f.__name__} args {args} kwargs: {kwds} output: {output}"
+            {
+                "message": "called mutator",
+                "mutator": f.__name__,
+                "args": args,
+                "kwargs": kwds,
+                "output": output,
+            }
         )
         return output
 
