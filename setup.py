@@ -10,6 +10,7 @@ import os
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test
+from setuptools.command.install import install as _install
 
 
 def find_version(*file_paths):
@@ -60,6 +61,16 @@ class PyTest(test):
         sys.exit(errno)
 
 
+class Install(_install):
+    def run(self):
+        _install.do_egg_install(self)
+        import nltk
+
+        nltk.download("wordnet")
+        nltk.download("cmudict")
+        nltk.download("punkt")
+
+
 setup(
     name="recumpiler",
     version=VERSION,
@@ -75,6 +86,20 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
+    install_requires=[
+        "textblob>=0.15.3,<1.0.0",
+        "word2number>=1.1,<2.0",
+        "nltk>=3.4.5,<4.0.0",
+        "lorem>=0.1.1,<1.0.0",
+        "pronouncing>=0.2.0,<1.0.0",
+        "pandas>=0.25.3,<1.0.0",
+        "numpy>=1.18.0,<2.0.0",
+        "better-profanity>=0.5.0,<1.0.0",
+        "homoglyphs>=1.3.5,<2.0.0",
+        "inflect>=4.0.0,<5.0.0",
+        "compound-word-splitter>=0.4,<1.0",
+    ],
+    setup_requires=["nltk>=3.4.5,<4.0.0",],
     tests_require=[
         "pytest>=5.3.2,<6.0.0",
         "pytest-cov>=2.8.1,<3.0.0",
