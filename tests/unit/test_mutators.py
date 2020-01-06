@@ -29,3 +29,23 @@ def test_mutate_text_blob(text):
     out_str = recumpile_text(text)
     assert isinstance(out_str, str)
     print(out_str)
+
+
+@pytest.mark.timeout(120)
+@pytest.mark.parametrize(
+    "text",
+    [
+        """
+        hello
+        there
+        """,
+        "foo\nbar",
+        "foo\n\nbar",
+        "foo\n\tbar",
+    ],
+)
+def test_mutate_text_blob_preserve_newlines(text):
+    out_str = recumpile_text(text)
+    assert isinstance(out_str, str)
+    assert "\n" in out_str
+    print(out_str)
