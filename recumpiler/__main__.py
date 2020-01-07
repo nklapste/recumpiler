@@ -7,10 +7,12 @@ import argparse
 import logging
 import os
 import sys
+import random
 from logging.handlers import TimedRotatingFileHandler
 
-from recumpiler.mutators import recumpile_text
+import numpy
 
+from recumpiler.mutators import recumpile_text
 
 LOG_LEVEL_STRINGS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
@@ -74,6 +76,8 @@ def init_logging(args, log_file_path):
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("-s", "--seed", type=str, help="Manually input a random seed.")
+
     group = parser.add_argument_group(title="Input")
     group = group.add_mutually_exclusive_group(required=True)
     group.add_argument("-t", "--text", help="Text to recumpile.")
@@ -93,9 +97,31 @@ def recumpile_repl():
         print(fucked_text)
 
 
+def str_seed_numpy_random(seed: str):
+    """seed :mod:`numpy.random` with a string based seed
+
+    numpy random takes a 32 bit unsigned int as such we use a similar method to
+    how :mod:`random` to convert a string seed to a 32 bit unsigned int"""
+    x = ord(seed[0]) << 7 if seed else 0
+    for c in map(ord, seed):
+        x = ((1000003 * x) ^ c) & 0xFFFFFFFF
+    x ^= len(seed)
+    seed = -2 if x == -1 else x
+    numpy.random.seed(seed)
+
+
+def seed_random(seed: str):
+    """seed both python built-in :mod:`random` and :mod:`numpy.random`"""
+    str_seed_numpy_random(seed)
+    random.seed(seed)
+
+
 def main():
     args = get_parser().parse_args()
     init_logging(args, "recumpiler.log")
+
+    if args.seed:
+        seed_random(args.seed)
 
     if args.text:
         fucked_text = recumpile_text(args.text)
