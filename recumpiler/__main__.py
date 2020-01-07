@@ -120,7 +120,7 @@ def main(argv=None):
     args = get_parser().parse_args(argv)
     init_logging(args, "recumpiler.log")
 
-    if args.seed:
+    if args.seed is not None:
         seed_random(args.seed)
 
     if args.text:
