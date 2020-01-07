@@ -33,17 +33,20 @@ class Pylint(test):
     def run_tests(self):
         from pylint.lint import Run
 
-        Run(
-            [
-                "recumpiler",
-                "--persistent",
-                "y",
-                "--rcfile",
-                ".pylintrc",
-                "--output-format",
-                "colorized",
-            ]
-        )
+        if (
+            __name__ == "__main__"
+        ):  # this is needed for windows not to raise a RuntimeError
+            Run(
+                [
+                    "recumpiler",
+                    "--persistent",
+                    "y",
+                    "--rcfile",
+                    ".pylintrc",
+                    "--output-format",
+                    "colorized",
+                ]
+            )
 
 
 class PyTest(test):
