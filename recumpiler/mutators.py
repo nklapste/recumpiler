@@ -876,9 +876,10 @@ def recumpile_sentence(sentance: Sentence) -> List[str]:
         ):
             new_tokens.append(get_random_text_face_emojis())
         if add_random_simple_text_emoji and decision(
-            # TODO: use textblob to determine mood of text and insert faces accordingly
-            #   likely need to do this after reconstruction of the text blob and go through this
-            #   sentance by sentance rather than word by word
+            # TODO: use textblob to determine mood of text and insert faces
+            #  accordingly likely need to do this after reconstruction of the
+            #  text blob and go through this sentence by sentence rather than
+            #  word by word.
             add_random_simple_text_emoji_probability
         ):
             new_tokens.append(get_random_simple_text_emojis())
