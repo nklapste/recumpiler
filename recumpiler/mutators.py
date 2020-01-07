@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """garbage code to make garbage text"""
-
+import configparser
 import csv
 import os
 import random
@@ -264,6 +264,13 @@ def owoer(token: str) -> str:
         )
 
     return token
+
+
+def get_default_mutator_config() -> configparser.ConfigParser:
+    """Read and return the default recumpiler mutator config"""
+    config = configparser.ConfigParser()
+    config.read(os.path.join(data_path, "recumpiler.ini"))
+    return config
 
 
 @logged_mutator
@@ -1263,7 +1270,9 @@ def recumpile_line(text: str) -> str:
 
 
 @logged_mutator
-def recumpile_text(text: str) -> str:
+def recumpile_text(
+    text: str, mutator_config: configparser.ConfigParser = get_default_mutator_config()
+) -> str:
     # TODO: preserve spacing better / Maybe use nltk tokenizers instead of a
     #  split method
     # TODO: go sentence by sentence token by token all for sentiment analysis

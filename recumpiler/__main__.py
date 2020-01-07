@@ -12,7 +12,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 import numpy
 
-from recumpiler.mutators import recumpile_text
+from recumpiler.mutators import recumpile_text, get_default_mutator_config
 
 LOG_LEVEL_STRINGS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
@@ -79,6 +79,9 @@ def get_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument("-s", "--seed", type=str, help="Manually input a random seed.")
+    parser.add_argument(
+        "-c", "--config", type=str, help="Path to a recumpiler mutator config file."
+    )
 
     group = parser.add_argument_group(title="Input")
     group = group.add_mutually_exclusive_group(required=True)
@@ -129,11 +132,15 @@ def main(argv=None):
     args = get_parser().parse_args(argv)
     init_logging(args, "recumpiler.log")
 
+    mutator_config = get_default_mutator_config()
+    if args.config:
+        mutator_config.read(args.config)
+
     if args.seed is not None:
         seed_random(args.seed)
 
     if args.text:
-        fucked_text = recumpile_text(args.text)
+        fucked_text = recumpile_text(args.text, mutator_config)
         print(fucked_text)
     if args.repl:
         recumpile_repl()
