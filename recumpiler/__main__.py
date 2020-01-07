@@ -116,8 +116,8 @@ def seed_random(seed: str):
     random.seed(seed)
 
 
-def main():
-    args = get_parser().parse_args()
+def main(argv=None):
+    args = get_parser().parse_args(argv)
     init_logging(args, "recumpiler.log")
 
     if args.seed:
