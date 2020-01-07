@@ -3,11 +3,8 @@
 
 """garbage code to make garbage text"""
 
-import csv
-import os
 import random
 import re
-import sqlite3
 import string
 from functools import wraps
 from math import ceil
@@ -19,7 +16,6 @@ import inflect
 import lorem
 import nltk
 import numpy as np
-import pandas
 import pronouncing
 from better_profanity import profanity
 from nltk.corpus import wordnet as wn
@@ -29,6 +25,16 @@ from word2number import w2n
 
 # TODO: issues with pyenchant
 # import splitter
+from recumpiler.utils import (
+    load_simple_text_emojis,
+    load_action_verbs,
+    load_rp_pronouns,
+    init_emoji_database,
+    get_emoji_database,
+    load_text_face_emoji,
+    load_garbage_tokens,
+    decision,
+)
 
 inflect_engine = inflect.engine()
 
@@ -51,17 +57,6 @@ def logged_mutator(f):
         return output
 
     return wrapper
-
-
-@logged_mutator
-def knotter(token: str) -> str:
-    token = re.sub(
-        r"(([^kK]|^)no+t)",
-        lambda match: f"kn{'o' * random.choice(range(1, 3))}t",
-        token,
-        flags=re.IGNORECASE,
-    )
-    return token
 
 
 # TODO: refactor this global garbage
@@ -173,6 +168,9 @@ space_gap_text_probability = 0.02
 space_gap_text_min_gap_size = 1
 space_gap_text_max_gap_size = 4
 
+add_text_relevant_emoji_probability = 0.1
+wrap_text_relevant_emoji_probability = 0.02
+
 
 @logged_mutator
 def num_to_word(token: str) -> str:
@@ -188,6 +186,17 @@ def word_to_num(token: str) -> str:
         return inflect_engine.number_to_words(int(token))
     except ValueError:
         return token
+
+
+@logged_mutator
+def knotter(token: str) -> str:
+    token = re.sub(
+        r"(([^kK]|^)no+t)",
+        lambda match: f"kn{'o' * random.choice(range(1, 3))}t",
+        token,
+        flags=re.IGNORECASE,
+    )
+    return token
 
 
 @logged_mutator
@@ -357,7 +366,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             r"^my+$",
-            lambda match: f"m{'y' if decision(0.3) else ''}{'a' * random.randint(2,3)}{'h' if decision(0.5) else ''}",
+            lambda match: f"m{'y' if decision(0.3) else ''}{'a' * random.randint(2, 3)}{'h' if decision(0.5) else ''}",
             token,
         )
 
@@ -383,7 +392,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             r"ing$",
-            f"in{'n' * random.randint(0,4) if decision(0.5) else 'in' * random.randint(0,4)}",
+            f"in{'n' * random.randint(0,4) if decision(0.5) else 'in' * random.randint(0, 4)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -409,7 +418,7 @@ def garbage(token: str) -> str:
     if decision(sub_to_subby_swap_probability):
         token = re.sub(
             r"s(u+)b",
-            lambda match: f"s{match.group(1)}bb{('y' if decision(0.5) else 'i') * random.randint(1,2)}",
+            lambda match: f"s{match.group(1)}bb{('y' if decision(0.5) else 'i') * random.randint(1, 2)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -418,7 +427,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             "([nN])(o+)",
-            lambda match: f"{match.group(1)}{'y' if decision(0.5) else ''}{'u' * (len(match.group(2)) * random.randint(1,6))}",
+            lambda match: f"{match.group(1)}{'y' if decision(0.5) else ''}{'u' * (len(match.group(2)) * random.randint(1, 6))}",
             token,
             flags=re.IGNORECASE,
         )
@@ -475,43 +484,7 @@ def cummer(token: str) -> str:
     return token
 
 
-garbage_tokens = [
-    "omega",
-    "UWU",
-    "uwu",
-    "OWO",
-    "owo",
-    "X.X",
-    "ksk ksk ksk ksk",
-    "x.x",
-    "nyah",
-    "nyahhhh",
-    "uguu",
-    "oof",
-    "ooomf",
-    "UGUU",
-    "3==D",
-    ":p",
-    ">:p",
-    ":3",
-    ">:3",
-    ">D3",
-    ">B3",
-    "num",
-    "nom",
-    "nuzzles",
-    "huehue",
-    "LOL",
-    "lol",
-    "lel",
-    "X3",
-    "xd",
-    "XD",
-    "sexnumber",
-    "69",
-    "420",
-    "weednumber",
-]
+garbage_tokens = load_garbage_tokens()
 
 
 @logged_mutator
@@ -519,43 +492,7 @@ def add_random_garbage_token():
     return random.choice(garbage_tokens)
 
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-data_path = os.path.join(dir_path, "data")
-
-with open(
-    os.path.join(data_path, "emoji.csv"), newline="\n", encoding="utf-8"
-) as csvfile:
-    text_face_emojis = list(
-        [item for sublist in csv.reader(csvfile) for item in sublist]
-    )
-
-
-def get_emoji_database():
-    emoji_database = sqlite3.connect(":memory:")
-    with open(
-        os.path.join(
-            data_path, "emoji-sentiment-data", "Emoji_Sentiment_Data_v1.0.csv"
-        ),
-        newline="\n",
-        encoding="utf-8",
-    ) as csvfile:
-        df = pandas.read_csv(csvfile)
-        df.to_sql("Emoji_Sentiment_Data", emoji_database, if_exists="fail", index=False)
-    return emoji_database
-
-
-emoji_database = sqlite3.connect(":memory:")
-with open(
-    os.path.join(data_path, "emoji-sentiment-data", "Emoji_Sentiment_Data_v1.0.csv"),
-    newline="\n",
-    encoding="utf-8",
-) as csvfile:
-    df = pandas.read_csv(csvfile)
-    df.to_sql("Emoji_Sentiment_Data", emoji_database, if_exists="append", index=False)
-
-
-add_text_relevant_emoji_probability = 0.1
-wrap_text_relevant_emoji_probability = 0.02
+text_face_emojis = load_text_face_emoji()
 
 
 @logged_mutator
@@ -576,24 +513,13 @@ def find_text_relevant_emoji(token: str) -> Optional[str]:
         return random.choice(results)[0]
 
 
-with open(
-    os.path.join(data_path, "simple_text_emoji.csv"), newline="\n", encoding="utf-8"
-) as csvfile:
-    simple_text_emojis = list(
-        [item for sublist in csv.reader(csvfile) for item in sublist]
-    )
+emoji_database = init_emoji_database()
 
+simple_text_emojis = load_simple_text_emojis()
 
-with open(
-    os.path.join(data_path, "action_verbs.csv"), newline="\n", encoding="utf-8"
-) as csvfile:
-    action_verbs = list([item for sublist in csv.reader(csvfile) for item in sublist])
+action_verbs = load_action_verbs()
 
-
-with open(
-    os.path.join(data_path, "rp_pronouns.csv"), newline="\n", encoding="utf-8"
-) as csvfile:
-    rp_pronouns = list([item for sublist in csv.reader(csvfile) for item in sublist])
+rp_pronouns = load_rp_pronouns()
 
 
 @logged_mutator
@@ -604,10 +530,6 @@ def get_random_text_face_emojis():
 @logged_mutator
 def get_random_simple_text_emojis():
     return random.choice(simple_text_emojis)
-
-
-def decision(probability) -> bool:
-    return random.random() < probability
 
 
 @logged_mutator
@@ -893,7 +815,7 @@ def recumpile_sentence(sentance: Sentence) -> List[str]:
         new_tokens.append(get_random_rp_action_sentence())
 
     if decision(random_lorem_ipsum_probability):
-        new_tokens.append(get_random_lorem_ipsum())
+        new_tokens.append(get_random_lorem_ipsum_sentance())
     return new_tokens
 
 
@@ -903,7 +825,7 @@ def add_ending_y(token: str) -> str:
 
 
 @logged_mutator
-def get_random_lorem_ipsum() -> str:
+def get_random_lorem_ipsum_sentance() -> str:
     """get lorem ipsum sentence"""
     lorem_sentence = lorem.sentence()
     if decision(lorem_ipsum_fuck_probability):
@@ -951,7 +873,7 @@ def recumpile_token(token: str) -> str:
         if decision(random_ending_y_probability):
             fucked_token = add_ending_y(fucked_token)
 
-        # TODO: likey making fu@k into k
+        # TODO: likely making fu@k into k
         # TODO: NOTE: indeed it is doing this fu@k
         #   >>>list(TextBlob("fu@k").words)
         #   ['fu', 'k']
@@ -1100,7 +1022,7 @@ def lazy_char_subbing(token: str) -> str:
     # you -> u, yuu
     token = re.sub(
         "^y+(o+)?u+$",
-        lambda match: f"u" if decision(0.5) else f"y{'u' * random.randint(1,4)}",
+        lambda match: f"u" if decision(0.5) else f"y{'u' * random.randint(1, 4)}",
         token,
         flags=re.IGNORECASE,
     )
@@ -1132,8 +1054,8 @@ def lazy_char_subbing(token: str) -> str:
 
     # er -> ur
     token = re.sub(
-        "er",
-        lambda match: f"ur",
+        "(e+)r",
+        lambda match: f"{'u' * (len(match.group(1)) + random.randint(0, 3))}r",
         token,
         flags=re.IGNORECASE,
         count=random.randint(0, 2),
