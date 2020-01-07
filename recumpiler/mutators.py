@@ -1055,8 +1055,8 @@ def lazy_char_subbing(token: str) -> str:
 
     # er -> ur
     token = re.sub(
-        "er",
-        lambda match: f"ur",
+        "(e+)r",
+        lambda match: f"{'u' * (len(match.group(1)) + random.randint(0, 3))}r",
         token,
         flags=re.IGNORECASE,
         count=random.randint(0, 2),
