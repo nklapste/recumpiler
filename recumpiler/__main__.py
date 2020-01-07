@@ -125,6 +125,7 @@ def seed_random(seed: str):
 
 
 def main(argv=None):
+    """main entry point"""
     args = get_parser().parse_args(argv)
     init_logging(args, "recumpiler.log")
 
