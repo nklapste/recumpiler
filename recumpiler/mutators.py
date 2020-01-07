@@ -401,7 +401,7 @@ def garbage(token: str) -> str:
     if decision(uck_to_ucc_swap_probability):
         token = re.sub(
             r"u+c+k+",
-            lambda match: f"u{'c'*random.randint(2,6)}{'i'*random.randint(0,3)}",
+            lambda match: f"u{'c' * random.randint(2,6)}{'i' * random.randint(0,3)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -409,7 +409,7 @@ def garbage(token: str) -> str:
     if decision(sub_to_subby_swap_probability):
         token = re.sub(
             r"s(u+)b",
-            lambda match: f"s{match.group(1)}bb{('y' if decision(0.5) else 'i')*random.randint(1,2)}",
+            lambda match: f"s{match.group(1)}bb{('y' if decision(0.5) else 'i') * random.randint(1,2)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -418,7 +418,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             "([nN])(o+)",
-            lambda match: f"{match.group(1)}{'y' if decision(0.5) else ''}{'u'*(len(match.group(2))*random.randint(1,6))}",
+            lambda match: f"{match.group(1)}{'y' if decision(0.5) else ''}{'u' * (len(match.group(2)) * random.randint(1,6))}",
             token,
             flags=re.IGNORECASE,
         )
@@ -1100,7 +1100,7 @@ def lazy_char_subbing(token: str) -> str:
     # you -> u, yuu
     token = re.sub(
         "^y+(o+)?u+$",
-        lambda match: f"u" if decision(0.5) else f"y{'u'*random.randint(1,4)}",
+        lambda match: f"u" if decision(0.5) else f"y{'u' * random.randint(1,4)}",
         token,
         flags=re.IGNORECASE,
     )
@@ -1125,7 +1125,7 @@ def lazy_char_subbing(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             "^wha+t$",
-            lambda match: f"w{random.choice(['a','u']) * random.randint(1, 4)}t",
+            lambda match: f"w{random.choice(['a', 'u']) * random.randint(1, 4)}t",
             token,
             flags=re.IGNORECASE,
         )
