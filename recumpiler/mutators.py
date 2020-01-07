@@ -1264,7 +1264,8 @@ def recumpile_line(text: str) -> str:
 
 @logged_mutator
 def recumpile_text(text: str) -> str:
-    # TODO: preserve spacing better / Maybe use nltk tokenizers instead of a split method
+    # TODO: preserve spacing better / Maybe use nltk tokenizers instead of a
+    #  split method
     # TODO: go sentence by sentence token by token all for sentiment analysis
     lines = []
 
