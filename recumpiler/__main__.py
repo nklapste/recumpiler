@@ -74,7 +74,9 @@ def init_logging(args, log_file_path):
 
 
 def get_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Recompile text to be semi-readable memey garbage."
+    )
 
     parser.add_argument("-s", "--seed", type=str, help="Manually input a random seed.")
 
