@@ -326,9 +326,7 @@ def garbage(token: str) -> str:
 
     # ove -> wuv
     if decision(0.7):
-        token = re.sub(
-            r"(o+)ve", lambda match: f"w{'u' * len(match.group(1))}v", token,
-        )
+        token = re.sub(r"(o+)ve", lambda match: f"w{'u' * len(match.group(1))}v", token)
 
     # one -> wun
     if decision(0.7):
@@ -940,9 +938,7 @@ def recumpile_token(token: str) -> str:
             fucked_tokens.append(recumpile_text("fucking normies!"))
 
         if decision(get_rhymes_probability):
-            for rhyme in get_runon_of_rhymes(
-                token, max_runon=max_runon_rhymes,
-            ):
+            for rhyme in get_runon_of_rhymes(token, max_runon=max_runon_rhymes):
                 fucked_rhyme = recumpile_token(rhyme)
                 fucked_tokens.append(fucked_rhyme)
 
@@ -1058,7 +1054,7 @@ def lazy_char_subbing(token: str) -> str:
     )
 
     # to,too, -> 2
-    token = re.sub("to+$", lambda match: f"2", token, flags=re.IGNORECASE,)
+    token = re.sub("to+$", lambda match: f"2", token, flags=re.IGNORECASE)
     return token
 
 
