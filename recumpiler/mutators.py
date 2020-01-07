@@ -169,6 +169,10 @@ homofiy_percentage = 0.3
 
 back_tick_text_probability = 0.05
 
+space_gap_text_probability = 0.02
+space_gap_text_min_gap_size = 1
+space_gap_text_max_gap_size = 4
+
 
 @logged_mutator
 def num_to_word(token: str) -> str:
@@ -534,9 +538,7 @@ def get_emoji_database():
         encoding="utf-8",
     ) as csvfile:
         df = pandas.read_csv(csvfile)
-        df.to_sql(
-            "Emoji_Sentiment_Data", emoji_database, if_exists="append", index=False
-        )
+        df.to_sql("Emoji_Sentiment_Data", emoji_database, if_exists="fail", index=False)
     return emoji_database
 
 
@@ -983,12 +985,6 @@ def recumpile_token(token: str) -> str:
         if decision(common_misspellings_probability):
             fucked_token = common_mispellings(fucked_token)
 
-        # TODO: discord format options
-        if decision(bold_text_probability):
-            fucked_token = bold_text(fucked_token)
-        elif decision(back_tick_text_probability):
-            fucked_token = back_tick_text(fucked_token)
-
         # TODO: likely also breaking the spacing between punctuation kittly 1!
         # TODO: `fucked` went to `DS` investigate
         # TODO: likely this is at fault
@@ -1030,6 +1026,22 @@ def recumpile_token(token: str) -> str:
 
         if relevant_emoji:
             fucked_tokens.append(relevant_emoji)
+
+    for i, fucked_token in enumerate(fucked_tokens):
+        if decision(space_gap_text_probability):
+            # TODO: this modification may be better placed elsewhere
+            fucked_token = space_gap_text(
+                fucked_token,
+                min_gap_size=space_gap_text_min_gap_size,
+                max_gap_size=space_gap_text_max_gap_size,
+            )
+        # TODO: discord format options
+        if decision(bold_text_probability):
+            fucked_token = bold_text(fucked_token)
+        elif decision(back_tick_text_probability):
+            fucked_token = back_tick_text(fucked_token)
+        fucked_tokens[i] = fucked_token
+
     return " ".join(fucked_tokens)
 
 
@@ -1210,6 +1222,14 @@ def custom_censoring(swear_word: str, censor_percent: float = 0.25) -> str:
             ]
         )
     return swear_word
+
+
+@logged_mutator
+def space_gap_text(token: str, min_gap_size: int = 1, max_gap_size: int = 4) -> str:
+    gap_size = random.randint(min_gap_size, max_gap_size)
+    token_ends = " " * (gap_size + 1)
+    token = token_ends + (" " * gap_size).join(token) + token_ends
+    return token
 
 
 @logged_mutator
