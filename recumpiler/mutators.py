@@ -275,7 +275,7 @@ def fuckyer(token: str) -> str:
         extra_fun = f"w{'u' * random.choice(range(1, 5))}k{y_choice_2}"
     token = re.sub(
         r"([Ff])?uck(er|ing)?",
-        lambda match: f"{match.group(1) or ''}{'u'*random.choice(range(1,5))}k{y_choice_1}{match.group(2) or ''}"
+        lambda match: f"{match.group(1) or ''}{'u' * random.choice(range(1,5))}k{y_choice_1}{match.group(2) or ''}"
         + " "
         + extra_fun,
         token,
@@ -304,7 +304,7 @@ def garbage(token: str) -> str:
     if decision(0.4):
         token = re.sub(
             r"e+ll+o+?",
-            lambda match: f"ew{'w'*ceil(np.random.rayleigh(1.2))}o",
+            lambda match: f"ew{'w' * ceil(np.random.rayleigh(1.2))}o",
             token,
             flags=re.IGNORECASE,
         )  # 2-6ish
@@ -312,13 +312,15 @@ def garbage(token: str) -> str:
     # cute -> koot
     token = re.sub(
         r"([Cc])u+te",
-        lambda match: f"{match.group(1)}oo{'o'*random.randint(0,5)}t",
+        lambda match: f"{match.group(1)}oo{'o' * random.randint(0,5)}t",
         token,
     )
 
     # ove -> wuv
     if decision(0.7):
-        token = re.sub(r"(o+)ve", lambda match: f"w{'u'*len(match.group(1))}v", token,)
+        token = re.sub(
+            r"(o+)ve", lambda match: f"w{'u' * len(match.group(1))}v", token,
+        )
 
     # one -> wun
     if decision(0.7):
@@ -328,7 +330,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             r"([aA])([sS])($|[^s])",
-            lambda match: f"{match.group(1)}{match.group(2)*random.randint(2,3)}t",
+            lambda match: f"{match.group(1)}{match.group(2) * random.randint(2,3)}t",
             token,
         )
 
@@ -337,7 +339,7 @@ def garbage(token: str) -> str:
     if decision(me_2_meow_swap_probability):
         token = re.sub(
             r"^me+$",
-            lambda match: f"m{'e'*random.randint(1,3)}{'o'*random.randint(1,3)}w",
+            lambda match: f"m{'e' * random.randint(1,3)}{'o' * random.randint(1,3)}w",
             token,
             flags=re.IGNORECASE,
         )
@@ -355,7 +357,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             r"^my+$",
-            lambda match: f"m{'y' if decision(0.3) else ''}{'a'*random.randint(2,3)}{'h' if decision(0.5) else ''}",
+            lambda match: f"m{'y' if decision(0.3) else ''}{'a' * random.randint(2,3)}{'h' if decision(0.5) else ''}",
             token,
         )
 
@@ -381,7 +383,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             r"ing$",
-            f"in{'n'*random.randint(0,4) if decision(0.5) else 'in'*random.randint(0,4) }",
+            f"in{'n' * random.randint(0,4) if decision(0.5) else 'in' * random.randint(0,4)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -390,7 +392,7 @@ def garbage(token: str) -> str:
     if decision(ksksk_enlargement_probability):
         token = re.sub(
             r"[kK][sS]|[sS][kK]",
-            lambda match: f"{match.group(0)*random.randint(2,6)}",
+            lambda match: f"{match.group(0) * random.randint(2,6)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -1155,25 +1157,25 @@ def lazy_char_subbing(token: str) -> str:
 def common_mispellings(token: str) -> str:
     # TODO: cleanup
     token = re.sub(
-        "([^\s])y$", lambda match: f"{match.group(1)}{'i'*random.randint(1,1)}", token
+        r"([^\s])y$", lambda match: f"{match.group(1)}{'i'*random.randint(1,1)}", token
     )
     token = re.sub(
-        "([^\s])Y$", lambda match: f"{match.group(1)}{'Y'*random.randint(1,2)}", token
+        r"([^\s])Y$", lambda match: f"{match.group(1)}{'Y'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([^\s])s$", lambda match: f"{match.group(1)}{'z'*random.randint(1,2)}", token
+        r"([^\s])s$", lambda match: f"{match.group(1)}{'z'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([^\s])S$", lambda match: f"{match.group(1)}{'Z'*random.randint(1,2)}", token
+        r"([^\s])S$", lambda match: f"{match.group(1)}{'Z'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([^\s])z$", lambda match: f"{match.group(1)}{'s'*random.randint(1,2)}", token
+        r"([^\s])z$", lambda match: f"{match.group(1)}{'s'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([^\s])Z$", lambda match: f"{match.group(1)}{'S'*random.randint(1,2)}", token
+        r"([^\s])Z$", lambda match: f"{match.group(1)}{'S'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([eE])([iI])", lambda match: f"{match.group(2)}{match.group(1)}", token
+        r"([eE])([iI])", lambda match: f"{match.group(2)}{match.group(1)}", token
     )
     return token
 
@@ -1182,7 +1184,7 @@ def common_mispellings(token: str) -> str:
 def fix_punctuation_spacing(text: str) -> str:
     # TODO: this is a meh way to solve punct being incorrectly joined should investigate
     return re.sub(
-        "([^\s]) ([!?.,]+)", lambda match: f"{match.group(1)}{match.group(2)}", text
+        r"([^\s]) ([!?.,]+)", lambda match: f"{match.group(1)}{match.group(2)}", text
     )
 
 
