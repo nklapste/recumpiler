@@ -1220,16 +1220,25 @@ def replace_with_random_synonym(token: str) -> str:
 
 
 @logged_mutator
-def recumpile_text(text: str) -> str:
+def recumpile_line(text: str) -> str:
     new_tokens = []
-    # TODO: preserve spacing better
-    # TODO: go sentence by sentence token by token all for sentiment analysis
     for sentence in TextBlob(text).sentences:
         new_tokens += recumpile_sentence(sentence)
-
     out_str = TreebankWordDetokenizer().detokenize(new_tokens)
     out_str = fix_punctuation_spacing(out_str)
+
     return out_str
+
+
+@logged_mutator
+def recumpile_text(text: str) -> str:
+    # TODO: preserve spacing better / Maybe use nltk tokenizers instead of a split method
+    # TODO: go sentence by sentence token by token all for sentiment analysis
+    lines = []
+
+    for line in text.split("\n"):
+        lines.append(recumpile_line(line))
+    return "\n".join(lines)
 
 
 # TODO: fuck to ck
