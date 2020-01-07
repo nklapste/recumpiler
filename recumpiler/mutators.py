@@ -629,9 +629,14 @@ def shuffle_str(token: str) -> str:
 
 @logged_mutator
 def get_runon_of_rhymes(
-    token: str, min_runon: int = 1, max_runon: int = 3, allow_token_dupe: bool = False,
-) -> Set[str]:
-    selected_rhymes = set()
+    token: str,
+    min_runon: int = 1,
+    max_runon: int = 3,
+    allow_token_dupe: bool = False,
+    allow_rhyme_dupes: bool = False,
+) -> List[str]:
+    # TODO: this is a complicated mess
+    selected_rhymes = []
     tried_nltk = False
     tried_pronouncing = False
     while True:
@@ -643,8 +648,6 @@ def get_runon_of_rhymes(
                     rhymes.remove(token)
                 except ValueError:
                     pass
-            if rhymes:
-                selected_rhymes.add(random.choice(rhymes))
         else:
             tried_nltk = True
             level = 4
@@ -656,11 +659,17 @@ def get_runon_of_rhymes(
                     except ValueError:
                         pass
                 if rhymes:
-                    selected_rhymes.add(random.choice(rhymes))
                     break
                 if level == 0:
                     break
                 level -= 1
+
+        if allow_rhyme_dupes:
+            selected_rhymes.append(random.choice(rhymes))
+        else:
+            rhymes = list([rhyme for rhyme in rhymes if rhyme not in selected_rhymes])
+            if rhymes:
+                selected_rhymes.append(random.choice(rhymes))
 
         if (decision(0.5) and len(selected_rhymes) == min_runon) or len(
             selected_rhymes
