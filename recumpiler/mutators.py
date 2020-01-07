@@ -859,11 +859,11 @@ def recumpile_sentence(sentance: Sentence) -> List[str]:
         new_tokens.append(recumpiled_token)
 
         if decision(add_definition_in_parenthesis_probability):
-            definiton = get_token_random_definition(token)
-            if definiton:
+            definition = get_token_random_definition(token)
+            if definition:
                 new_tokens += [
                     f"[[{recumpile_token('DEFINITION')} {token.upper()}:",
-                    f"{recumpile_text(definiton)}]]",
+                    f"{recumpile_text(definition)}]]",
                 ]
 
         if add_husky:
