@@ -561,6 +561,12 @@ def get_runon_of_rhymes(
     selected_rhymes = []
 
     rhymes = get_pronouncing_rhyme(token)
+    if not allow_token_dupe:
+        try:
+            rhymes.remove(token)
+        except ValueError:
+            pass
+
     level = 4
     while True:
         rhymes += get_nltk_rymes(token, level)
@@ -571,7 +577,7 @@ def get_runon_of_rhymes(
                 pass
         if rhymes:
             break
-        if level == 0:
+        if level == 0 or len(rhymes) > max_runon:
             break
         level -= 1
 
