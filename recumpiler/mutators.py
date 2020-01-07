@@ -11,7 +11,7 @@ import sqlite3
 import string
 from functools import wraps
 from math import ceil
-from typing import List, Optional, Set
+from typing import List, Optional
 from logging import getLogger
 
 import homoglyphs as hg
@@ -275,7 +275,7 @@ def fuckyer(token: str) -> str:
         extra_fun = f"w{'u' * random.choice(range(1, 5))}k{y_choice_2}"
     token = re.sub(
         r"([Ff])?uck(er|ing)?",
-        lambda match: f"{match.group(1) or ''}{'u'*random.choice(range(1,5))}k{y_choice_1}{match.group(2) or ''}"
+        lambda match: f"{match.group(1) or ''}{'u' * random.choice(range(1,5))}k{y_choice_1}{match.group(2) or ''}"
         + " "
         + extra_fun,
         token,
@@ -304,7 +304,7 @@ def garbage(token: str) -> str:
     if decision(0.4):
         token = re.sub(
             r"e+ll+o+?",
-            lambda match: f"ew{'w'*ceil(np.random.rayleigh(1.2))}o",
+            lambda match: f"ew{'w' * ceil(np.random.rayleigh(1.2))}o",
             token,
             flags=re.IGNORECASE,
         )  # 2-6ish
@@ -312,13 +312,15 @@ def garbage(token: str) -> str:
     # cute -> koot
     token = re.sub(
         r"([Cc])u+te",
-        lambda match: f"{match.group(1)}oo{'o'*random.randint(0,5)}t",
+        lambda match: f"{match.group(1)}oo{'o' * random.randint(0,5)}t",
         token,
     )
 
     # ove -> wuv
     if decision(0.7):
-        token = re.sub(r"(o+)ve", lambda match: f"w{'u'*len(match.group(1))}v", token,)
+        token = re.sub(
+            r"(o+)ve", lambda match: f"w{'u' * len(match.group(1))}v", token,
+        )
 
     # one -> wun
     if decision(0.7):
@@ -328,7 +330,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             r"([aA])([sS])($|[^s])",
-            lambda match: f"{match.group(1)}{match.group(2)*random.randint(2,3)}t",
+            lambda match: f"{match.group(1)}{match.group(2) * random.randint(2,3)}t",
             token,
         )
 
@@ -337,7 +339,7 @@ def garbage(token: str) -> str:
     if decision(me_2_meow_swap_probability):
         token = re.sub(
             r"^me+$",
-            lambda match: f"m{'e'*random.randint(1,3)}{'o'*random.randint(1,3)}w",
+            lambda match: f"m{'e' * random.randint(1,3)}{'o' * random.randint(1,3)}w",
             token,
             flags=re.IGNORECASE,
         )
@@ -355,7 +357,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             r"^my+$",
-            lambda match: f"m{'y' if decision(0.3) else ''}{'a'*random.randint(2,3)}{'h' if decision(0.5) else ''}",
+            lambda match: f"m{'y' if decision(0.3) else ''}{'a' * random.randint(2,3)}{'h' if decision(0.5) else ''}",
             token,
         )
 
@@ -381,7 +383,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             r"ing$",
-            f"in{'n'*random.randint(0,4) if decision(0.5) else 'in'*random.randint(0,4) }",
+            f"in{'n' * random.randint(0,4) if decision(0.5) else 'in' * random.randint(0,4)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -390,7 +392,7 @@ def garbage(token: str) -> str:
     if decision(ksksk_enlargement_probability):
         token = re.sub(
             r"[kK][sS]|[sS][kK]",
-            lambda match: f"{match.group(0)*random.randint(2,6)}",
+            lambda match: f"{match.group(0) * random.randint(2,6)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -399,7 +401,7 @@ def garbage(token: str) -> str:
     if decision(uck_to_ucc_swap_probability):
         token = re.sub(
             r"u+c+k+",
-            lambda match: f"u{'c'*random.randint(2,6)}{'i'*random.randint(0,3)}",
+            lambda match: f"u{'c' * random.randint(2,6)}{'i' * random.randint(0,3)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -407,7 +409,7 @@ def garbage(token: str) -> str:
     if decision(sub_to_subby_swap_probability):
         token = re.sub(
             r"s(u+)b",
-            lambda match: f"s{match.group(1)}bb{('y' if decision(0.5) else 'i')*random.randint(1,2)}",
+            lambda match: f"s{match.group(1)}bb{('y' if decision(0.5) else 'i') * random.randint(1,2)}",
             token,
             flags=re.IGNORECASE,
         )
@@ -416,7 +418,7 @@ def garbage(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             "([nN])(o+)",
-            lambda match: f"{match.group(1)}{'y' if decision(0.5) else ''}{'u'*(len(match.group(2))*random.randint(1,6))}",
+            lambda match: f"{match.group(1)}{'y' if decision(0.5) else ''}{'u' * (len(match.group(2)) * random.randint(1,6))}",
             token,
             flags=re.IGNORECASE,
         )
@@ -629,9 +631,14 @@ def shuffle_str(token: str) -> str:
 
 @logged_mutator
 def get_runon_of_rhymes(
-    token: str, min_runon: int = 1, max_runon: int = 3, allow_token_dupe: bool = False,
-) -> Set[str]:
-    selected_rhymes = set()
+    token: str,
+    min_runon: int = 1,
+    max_runon: int = 3,
+    allow_token_dupe: bool = False,
+    allow_rhyme_dupes: bool = False,
+) -> List[str]:
+    # TODO: this is a complicated mess
+    selected_rhymes = []
     tried_nltk = False
     tried_pronouncing = False
     while True:
@@ -643,8 +650,6 @@ def get_runon_of_rhymes(
                     rhymes.remove(token)
                 except ValueError:
                     pass
-            if rhymes:
-                selected_rhymes.add(random.choice(rhymes))
         else:
             tried_nltk = True
             level = 4
@@ -656,11 +661,17 @@ def get_runon_of_rhymes(
                     except ValueError:
                         pass
                 if rhymes:
-                    selected_rhymes.add(random.choice(rhymes))
                     break
                 if level == 0:
                     break
                 level -= 1
+
+        if allow_rhyme_dupes:
+            selected_rhymes.append(random.choice(rhymes))
+        else:
+            rhymes = list([rhyme for rhyme in rhymes if rhyme not in selected_rhymes])
+            if rhymes:
+                selected_rhymes.append(random.choice(rhymes))
 
         if (decision(0.5) and len(selected_rhymes) == min_runon) or len(
             selected_rhymes
@@ -850,11 +861,11 @@ def recumpile_sentence(sentance: Sentence) -> List[str]:
         new_tokens.append(recumpiled_token)
 
         if decision(add_definition_in_parenthesis_probability):
-            definiton = get_token_random_definition(token)
-            if definiton:
+            definition = get_token_random_definition(token)
+            if definition:
                 new_tokens += [
                     f"[[{recumpile_token('DEFINITION')} {token.upper()}:",
-                    f"{recumpile_text(definiton)}]]",
+                    f"{recumpile_text(definition)}]]",
                 ]
 
         if add_husky:
@@ -867,9 +878,10 @@ def recumpile_sentence(sentance: Sentence) -> List[str]:
         ):
             new_tokens.append(get_random_text_face_emojis())
         if add_random_simple_text_emoji and decision(
-            # TODO: use textblob to determine mood of text and insert faces accordingly
-            #   likely need to do this after reconstruction of the text blob and go through this
-            #   sentance by sentance rather than word by word
+            # TODO: use textblob to determine mood of text and insert faces
+            #  accordingly likely need to do this after reconstruction of the
+            #  text blob and go through this sentence by sentence rather than
+            #  word by word.
             add_random_simple_text_emoji_probability
         ):
             new_tokens.append(get_random_simple_text_emojis())
@@ -1088,7 +1100,7 @@ def lazy_char_subbing(token: str) -> str:
     # you -> u, yuu
     token = re.sub(
         "^y+(o+)?u+$",
-        lambda match: f"u" if decision(0.5) else f"y{'u'*random.randint(1,4)}",
+        lambda match: f"u" if decision(0.5) else f"y{'u' * random.randint(1,4)}",
         token,
         flags=re.IGNORECASE,
     )
@@ -1113,7 +1125,7 @@ def lazy_char_subbing(token: str) -> str:
     if decision(0.5):
         token = re.sub(
             "^wha+t$",
-            lambda match: f"w{random.choice(['a','u']) * random.randint(1, 4)}t",
+            lambda match: f"w{random.choice(['a', 'u']) * random.randint(1, 4)}t",
             token,
             flags=re.IGNORECASE,
         )
@@ -1145,25 +1157,25 @@ def lazy_char_subbing(token: str) -> str:
 def common_mispellings(token: str) -> str:
     # TODO: cleanup
     token = re.sub(
-        "([^\s])y$", lambda match: f"{match.group(1)}{'i'*random.randint(1,1)}", token
+        r"([^\s])y$", lambda match: f"{match.group(1)}{'i'*random.randint(1,1)}", token
     )
     token = re.sub(
-        "([^\s])Y$", lambda match: f"{match.group(1)}{'Y'*random.randint(1,2)}", token
+        r"([^\s])Y$", lambda match: f"{match.group(1)}{'Y'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([^\s])s$", lambda match: f"{match.group(1)}{'z'*random.randint(1,2)}", token
+        r"([^\s])s$", lambda match: f"{match.group(1)}{'z'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([^\s])S$", lambda match: f"{match.group(1)}{'Z'*random.randint(1,2)}", token
+        r"([^\s])S$", lambda match: f"{match.group(1)}{'Z'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([^\s])z$", lambda match: f"{match.group(1)}{'s'*random.randint(1,2)}", token
+        r"([^\s])z$", lambda match: f"{match.group(1)}{'s'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([^\s])Z$", lambda match: f"{match.group(1)}{'S'*random.randint(1,2)}", token
+        r"([^\s])Z$", lambda match: f"{match.group(1)}{'S'*random.randint(1,2)}", token
     )
     token = re.sub(
-        "([eE])([iI])", lambda match: f"{match.group(2)}{match.group(1)}", token
+        r"([eE])([iI])", lambda match: f"{match.group(2)}{match.group(1)}", token
     )
     return token
 
@@ -1172,7 +1184,7 @@ def common_mispellings(token: str) -> str:
 def fix_punctuation_spacing(text: str) -> str:
     # TODO: this is a meh way to solve punct being incorrectly joined should investigate
     return re.sub(
-        "([^\s]) ([!\?.,]+)", lambda match: f"{match.group(1)}{match.group(2)}", text
+        r"([^\s]) ([!?.,]+)", lambda match: f"{match.group(1)}{match.group(2)}", text
     )
 
 
@@ -1252,7 +1264,8 @@ def recumpile_line(text: str) -> str:
 
 @logged_mutator
 def recumpile_text(text: str) -> str:
-    # TODO: preserve spacing better / Maybe use nltk tokenizers instead of a split method
+    # TODO: preserve spacing better / Maybe use nltk tokenizers instead of a
+    #  split method
     # TODO: go sentence by sentence token by token all for sentiment analysis
     lines = []
 

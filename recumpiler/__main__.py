@@ -7,10 +7,12 @@ import argparse
 import logging
 import os
 import sys
+import random
 from logging.handlers import TimedRotatingFileHandler
 
-from recumpiler.mutators import recumpile_text
+import numpy
 
+from recumpiler.mutators import recumpile_text
 
 LOG_LEVEL_STRINGS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
@@ -72,7 +74,11 @@ def init_logging(args, log_file_path):
 
 
 def get_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Recompile text to be semi-readable memey garbage."
+    )
+
+    parser.add_argument("-s", "--seed", type=str, help="Manually input a random seed.")
 
     group = parser.add_argument_group(title="Input")
     group = group.add_mutually_exclusive_group(required=True)
@@ -93,9 +99,38 @@ def recumpile_repl():
         print(fucked_text)
 
 
-def main():
-    args = get_parser().parse_args()
+def str_to_32_bit_unsigned_int(string: str) -> int:
+    """convert a :obj:`str` to a 32 bit unsigned int for
+    :meth:`numpy.random.seed` input"""
+    string_int = ord(string[0]) << 7 if string else 0
+    for c in map(ord, string):
+        string_int = ((1000003 * string_int) ^ c) & 0xFFFFFFFF
+    string_int ^= len(string)
+    string_int = -2 if string_int == -1 else string_int
+    return string_int
+
+
+def str_seed_numpy_random(seed: str):
+    """seed :mod:`numpy.random` with a string based seed
+
+    numpy random takes a 32 bit unsigned int as such we use a similar method to
+    how :mod:`random` to convert a string seed to a 32 bit unsigned int"""
+    numpy.random.seed(str_to_32_bit_unsigned_int(seed))
+
+
+def seed_random(seed: str):
+    """seed both python built-in :mod:`random` and :mod:`numpy.random`"""
+    str_seed_numpy_random(seed)
+    random.seed(seed)
+
+
+def main(argv=None):
+    """main entry point"""
+    args = get_parser().parse_args(argv)
     init_logging(args, "recumpiler.log")
+
+    if args.seed is not None:
+        seed_random(args.seed)
 
     if args.text:
         fucked_text = recumpile_text(args.text)
