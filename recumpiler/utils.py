@@ -57,6 +57,7 @@ def init_emoji_database() -> sqlite3.Connection:
         df.to_sql(
             "Emoji_Sentiment_Data", emoji_database, if_exists="append", index=False
         )
+        return emoji_database
 
 
 def get_emoji_database():
