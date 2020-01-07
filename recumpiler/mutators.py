@@ -873,7 +873,7 @@ def recumpile_token(token: str) -> str:
         if decision(random_ending_y_probability):
             fucked_token = add_ending_y(fucked_token)
 
-        # TODO: likey making fu@k into k
+        # TODO: likely making fu@k into k
         # TODO: NOTE: indeed it is doing this fu@k
         #   >>>list(TextBlob("fu@k").words)
         #   ['fu', 'k']
