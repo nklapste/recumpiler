@@ -6,7 +6,7 @@
 
 import pytest
 
-from recumpiler.mutators import recumpile_text
+from recumpiler.runner import recumpile_text
 
 
 @pytest.mark.timeout(120)

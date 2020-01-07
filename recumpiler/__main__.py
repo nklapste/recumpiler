@@ -12,7 +12,8 @@ from logging.handlers import TimedRotatingFileHandler
 
 import numpy
 
-from recumpiler.mutators import recumpile_text, get_default_mutator_config
+from recumpiler.runner import recumpile_text
+from recumpiler.utils import get_default_mutator_config
 
 LOG_LEVEL_STRINGS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
