@@ -171,6 +171,8 @@ space_gap_text_max_gap_size = 4
 add_text_relevant_emoji_probability = 0.1
 wrap_text_relevant_emoji_probability = 0.02
 
+lr_to_w_swap_probability = 0.4
+
 
 @logged_mutator
 def num_to_word(token: str) -> str:
@@ -454,6 +456,14 @@ def rawrer(token: str) -> str:
     )
     token = re.sub(r"([Rr])oar", lambda match: f"{match.group(1)}awr", token)
 
+    return token
+
+
+@logged_mutator
+def lr_to_w_swap(token: str) -> str:
+    token = re.sub(
+        r"([lrLR])", lambda match: f"{'w' if match.group(1).islower() else 'W'}", token
+    )
     return token
 
 
@@ -864,6 +874,9 @@ def recumpile_token(token: str) -> str:
             token = word_to_num(token)
         if decision(num_to_word_probability):
             token = num_to_word(token)
+
+        if decision(lr_to_w_swap_probability):
+            token = lr_to_w_swap(token)
 
         fucked_token = knotter(fuckyer(reeeer(rawrer(garbage(owoer(cummer(token)))))))
 
