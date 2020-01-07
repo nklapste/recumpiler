@@ -1181,7 +1181,7 @@ def common_mispellings(token: str) -> str:
 def fix_punctuation_spacing(text: str) -> str:
     # TODO: this is a meh way to solve punct being incorrectly joined should investigate
     return re.sub(
-        "([^\s]) ([!\?.,]+)", lambda match: f"{match.group(1)}{match.group(2)}", text
+        "([^\s]) ([!?.,]+)", lambda match: f"{match.group(1)}{match.group(2)}", text
     )
 
 
