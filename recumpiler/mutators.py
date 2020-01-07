@@ -11,7 +11,7 @@ import sqlite3
 import string
 from functools import wraps
 from math import ceil
-from typing import List, Optional, Set
+from typing import List, Optional
 from logging import getLogger
 
 import homoglyphs as hg
