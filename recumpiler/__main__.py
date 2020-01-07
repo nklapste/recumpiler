@@ -99,17 +99,23 @@ def recumpile_repl():
         print(fucked_text)
 
 
+def str_to_32_bit_unsigned_int(string: str) -> int:
+    """convert a :obj:`str` to a 32 bit unsigned int for
+    :meth:`numpy.random.seed` input"""
+    string_int = ord(string[0]) << 7 if string else 0
+    for c in map(ord, string):
+        string_int = ((1000003 * string_int) ^ c) & 0xFFFFFFFF
+    string_int ^= len(string)
+    string_int = -2 if string_int == -1 else string_int
+    return string_int
+
+
 def str_seed_numpy_random(seed: str):
     """seed :mod:`numpy.random` with a string based seed
 
     numpy random takes a 32 bit unsigned int as such we use a similar method to
     how :mod:`random` to convert a string seed to a 32 bit unsigned int"""
-    x = ord(seed[0]) << 7 if seed else 0
-    for c in map(ord, seed):
-        x = ((1000003 * x) ^ c) & 0xFFFFFFFF
-    x ^= len(seed)
-    seed = -2 if x == -1 else x
-    numpy.random.seed(seed)
+    numpy.random.seed(str_to_32_bit_unsigned_int(seed))
 
 
 def seed_random(seed: str):
