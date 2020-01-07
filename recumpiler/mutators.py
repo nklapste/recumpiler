@@ -3,7 +3,6 @@
 
 """garbage code to make garbage text"""
 
-import os
 import random
 import re
 import string
