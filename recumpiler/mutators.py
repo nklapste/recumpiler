@@ -157,7 +157,6 @@ fucking_normies_addition = 0.3
 
 get_rhymes_probability = 0.01
 max_runon_rhymes = 3
-min_runon_rhymes = 0
 
 homofiy_probability = 0.3
 homofiy_percentage = 0.3
@@ -329,9 +328,7 @@ def garbage(token: str) -> str:
 
     # ove -> wuv
     if decision(0.7):
-        token = re.sub(
-            r"(o+)ve", lambda match: f"w{'u' * len(match.group(1))}v", token,
-        )
+        token = re.sub(r"(o+)ve", lambda match: f"w{'u' * len(match.group(1))}v", token)
 
     # one -> wun
     if decision(0.7):
@@ -564,54 +561,43 @@ def shuffle_str(token: str) -> str:
 @logged_mutator
 def get_runon_of_rhymes(
     token: str,
-    min_runon: int = 1,
     max_runon: int = 3,
     allow_token_dupe: bool = False,
     allow_rhyme_dupes: bool = False,
 ) -> List[str]:
     # TODO: this is a complicated mess
     selected_rhymes = []
-    tried_nltk = False
-    tried_pronouncing = False
+
+    rhymes = get_pronouncing_rhyme(token)
+    if not allow_token_dupe:
+        try:
+            rhymes.remove(token)
+        except ValueError:
+            pass
+
+    level = 4
     while True:
-        if decision(0.5):
-            tried_pronouncing = True
-            rhymes = get_pronouncing_rhyme(token)
-            if not allow_token_dupe:
-                try:
-                    rhymes.remove(token)
-                except ValueError:
-                    pass
-        else:
-            tried_nltk = True
-            level = 4
-            while True:
-                rhymes = get_nltk_rymes(token, level)
-                if not allow_token_dupe:
-                    try:
-                        rhymes.remove(token)
-                    except ValueError:
-                        pass
-                if rhymes:
-                    break
-                if level == 0:
-                    break
-                level -= 1
-
-        if allow_rhyme_dupes:
-            selected_rhymes.append(random.choice(rhymes))
-        else:
-            rhymes = list([rhyme for rhyme in rhymes if rhyme not in selected_rhymes])
-            if rhymes:
-                selected_rhymes.append(random.choice(rhymes))
-
-        if (decision(0.5) and len(selected_rhymes) == min_runon) or len(
-            selected_rhymes
-        ) == max_runon:
+        rhymes += get_nltk_rymes(token, level)
+        if not allow_token_dupe:
+            try:
+                rhymes.remove(token)
+            except ValueError:
+                pass
+        if rhymes:
             break
-
-        if not selected_rhymes and tried_pronouncing and tried_nltk:
+        if level == 0 or len(rhymes) > max_runon:
             break
+        level -= 1
+
+    if not allow_token_dupe:
+        try:
+            rhymes.remove(token)
+        except ValueError:
+            pass
+    if not allow_rhyme_dupes:
+        rhymes = list(sorted(list(set(rhymes))))
+    if rhymes:
+        selected_rhymes += random.choices(rhymes, k=min(len(rhymes), max_runon))
     return selected_rhymes
 
 
@@ -965,9 +951,7 @@ def recumpile_token(token: str) -> str:
             fucked_tokens.append(recumpile_text("fucking normies!"))
 
         if decision(get_rhymes_probability):
-            for rhyme in get_runon_of_rhymes(
-                token, max_runon=max_runon_rhymes, min_runon=min_runon_rhymes
-            ):
+            for rhyme in get_runon_of_rhymes(token, max_runon=max_runon_rhymes):
                 fucked_rhyme = recumpile_token(rhyme)
                 fucked_tokens.append(fucked_rhyme)
 
@@ -1083,7 +1067,7 @@ def lazy_char_subbing(token: str) -> str:
     )
 
     # to,too, -> 2
-    token = re.sub("to+$", lambda match: f"2", token, flags=re.IGNORECASE,)
+    token = re.sub("to+$", lambda match: f"2", token, flags=re.IGNORECASE)
     return token
 
 
