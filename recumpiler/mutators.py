@@ -48,7 +48,7 @@ def logged_mutator(f):
         start = timer()
         output = f(*args, **kwds)
         end = timer()
-        __log__.debug(
+        __log__.info(
             {
                 "message": "called mutator",
                 "mutator": f.__name__,
