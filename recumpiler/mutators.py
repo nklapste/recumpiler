@@ -10,6 +10,7 @@ from functools import wraps
 from math import ceil
 from typing import List, Optional
 from logging import getLogger
+from timeit import default_timer as timer
 
 import homoglyphs as hg
 import inflect
@@ -44,7 +45,9 @@ __log__ = getLogger(__name__)
 def logged_mutator(f):
     @wraps(f)
     def wrapper(*args, **kwds):
+        start = timer()
         output = f(*args, **kwds)
+        end = timer()
         __log__.debug(
             {
                 "message": "called mutator",
@@ -52,6 +55,7 @@ def logged_mutator(f):
                 "args": args,
                 "kwargs": kwds,
                 "output": output,
+                "exc_time": "{0:.15f}".format(end - start),
             }
         )
         return output
